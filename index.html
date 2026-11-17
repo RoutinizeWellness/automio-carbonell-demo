@@ -1,0 +1,62 @@
+<!doctype html><html lang="ca"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>Demo · Documentació tècnica i recanvis</title>
+<style>
+:root{--bg:#f6f6f4;--card:#fff;--ink:#1d1f23;--mut:#6b7078;--line:#e6e6e2;--acc:#1f5eff;--ok:#1a7f4b;--warn:#b86e00}
+*{box-sizing:border-box}body{margin:0;font:15px/1.45 -apple-system,Segoe UI,Roboto,sans-serif;color:var(--ink);background:var(--bg);display:flex;min-height:100vh}
+nav{width:210px;background:var(--card);border-right:1px solid var(--line);padding:20px 12px;position:sticky;top:0;height:100vh;flex:none}
+nav h1{font-size:14px;margin:0 8px 18px;font-weight:650}nav small{display:block;color:var(--mut);font-weight:400;margin-top:2px}
+nav button{display:block;width:100%;text-align:left;border:0;background:none;padding:9px 10px;border-radius:8px;font:inherit;color:var(--mut);cursor:pointer}
+nav button.on{background:#eef2ff;color:var(--acc);font-weight:600}
+main{flex:1;padding:24px 28px;max-width:1100px;min-width:0}
+.tag{font-size:12px;color:var(--mut);margin-bottom:14px}h2{margin:0 0 4px;font-size:20px}p.sub{color:var(--mut);margin:0 0 18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px}
+.row{display:flex;align-items:center;gap:12px;padding:13px 16px;border-top:1px solid var(--line);cursor:pointer}.row:first-child{border-top:0}.row:hover{background:#fafaf8}
+.row b{font-weight:600}.row .m{color:var(--mut);font-size:13px}.grow{flex:1;min-width:0}
+.pill{font-size:12px;padding:2px 9px;border-radius:99px;background:#f0f0ec;color:var(--mut);white-space:nowrap}.pill.ok{background:#e6f5ec;color:var(--ok)}.pill.w{background:#fff2dc;color:var(--warn)}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:16px}.doc{padding:18px;font-size:13px;position:relative;min-height:320px}
+.doc .pg{color:var(--mut);font-size:12px;margin-bottom:10px}.doc table{width:100%;border-collapse:collapse;margin-top:8px}.doc td,.doc th{border:1px solid var(--line);padding:5px 8px;text-align:left}
+mark{background:#fff0a8;padding:0 2px;border-radius:3px}mark.sel{outline:2px solid var(--acc)}
+.f{padding:12px 16px;border-top:1px solid var(--line)}.f:first-of-type{border-top:0}.f label{display:block;font-size:12px;color:var(--mut)}
+.f .v{display:flex;gap:8px;align-items:center;justify-content:space-between}.f input{font:inherit;border:1px solid transparent;border-radius:6px;padding:3px 6px;margin-left:-6px;width:60%}.f input:focus{border-color:var(--acc);outline:0}
+.ref{font-size:12px;color:var(--acc);cursor:pointer;text-decoration:underline}
+.btn{border:1px solid var(--line);background:var(--card);padding:8px 14px;border-radius:8px;font:inherit;cursor:pointer}.btn.p{background:var(--acc);color:#fff;border-color:var(--acc)}
+.bar{display:flex;gap:8px;justify-content:flex-end;padding:12px 16px;border-top:1px solid var(--line)}
+.back{color:var(--acc);cursor:pointer;margin-bottom:10px;display:inline-block}.draft{padding:16px;white-space:pre-wrap;font-size:14px}
+.empty{padding:30px;text-align:center;color:var(--mut)}
+@media(max-width:760px){body{flex-direction:column}nav{width:100%;height:auto;position:static;display:flex;gap:4px;padding:10px;overflow-x:auto}nav h1{display:none}nav button{width:auto;white-space:nowrap}main{padding:16px}.split{grid-template-columns:1fr}}
+</style></head><body>
+<nav><h1>Documentació i recanvis<small>Demo amb dades fictícies</small></h1>
+<button data-v="docs" class="on">Documents</button><button data-v="parts">Recanvis</button><button data-v="req">Peticions a proveïdor</button></nav>
+<main id="m"></main>
+<script>
+const docs=[
+{id:1,n:"Plànol conjunt reductora R-240",t:"Plànol",src:"Correu del proveïdor",st:"Per revisar",f:[["Referència","R-240-A","pàg. 1, caixetí"],["Rodament eix d'entrada","6208-2RS","pàg. 2, llista de peces, pos. 7"],["Rodament eix de sortida","22210 E","pàg. 2, llista de peces, pos. 9"],["Retenidor eix d'entrada","TC 40×62×8","pàg. 2, pos. 11"]]},
+{id:2,n:"Manual manteniment bomba B-17",t:"Manual",src:"PDF carregat a mà",st:"Per revisar",f:[["Interval de greixatge","cada 2.000 h","pàg. 14, §6.2"],["Greix recomanat","Tipus NLGI 2","pàg. 14, §6.2"],["Junta mecànica","Ref. no consta al document","—"]]},
+{id:3,n:"Fitxa tècnica motor M-55",t:"Fitxa",src:"Carpeta de la planta",st:"Validat",f:[["Potència","5,5 kW","pàg. 1"],["Rodament davanter","6309 C3","pàg. 3"]]}];
+const parts=[
+{r:"6208-2RS",d:"Rodament d'una fila de boles",from:"Plànol R-240 · pos. 7",stock:2,min:4,sup:"Proveïdor A",lead:"2 dies"},
+{r:"22210 E",d:"Rodament oscil·lant de corrons",from:"Plànol R-240 · pos. 9",stock:0,min:2,sup:"Proveïdor B",lead:"5 dies"},
+{r:"TC 40×62×8",d:"Retén d'eix",from:"Plànol R-240 · pos. 11",stock:6,min:4,sup:"Proveïdor A",lead:"2 dies"},
+{r:"6309 C3",d:"Rodament motor M-55",from:"Fitxa M-55 · pàg. 3",stock:1,min:2,sup:"Proveïdor A",lead:"2 dies"}];
+const $=s=>document.querySelector(s),m=$('#m');let view='docs',state={};
+function nav(v){view=v;document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v==v));render()}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>nav(b.dataset.v));
+function render(){
+ if(view=='docs')return state.open?review(state.open):list();
+ if(view=='parts')return partsView();
+ return req()}
+function list(){m.innerHTML=`<div class="tag">Dades fictícies · exemple</div><h2>Documents</h2><p class="sub">Plànols, manuals i fitxes en un sol lloc. Tot el que s'extreu porta la pàgina d'origen i espera la teva revisió.</p>
+<div class="card">${docs.map(d=>`<div class="row" onclick="state.open=${d.id};render()"><div class="grow"><b>${d.n}</b><div class="m">${d.t} · ${d.src}</div></div><span class="pill ${d.st=='Validat'?'ok':'w'}">${d.st}</span></div>`).join('')}</div>`}
+function review(id){const d=docs.find(x=>x.id==id);
+ m.innerHTML=`<span class="back" onclick="state.open=null;render()">← Documents</span><h2>${d.n}</h2><p class="sub">Revisa cada dada amb el seu origen. Res es dona per bo sense la teva confirmació.</p>
+<div class="split"><div class="card doc"><div class="pg">Previsualització · ${d.f[0][2].split(',')[0]}</div><b>LLISTA DE PECES</b><table><tr><th>Pos.</th><th>Descripció</th><th>Ref.</th></tr><tr><td>7</td><td>Rodament eix entrada</td><td><mark id="h0">6208-2RS</mark></td></tr><tr><td>9</td><td>Rodament eix sortida</td><td><mark id="h1">22210 E</mark></td></tr><tr><td>11</td><td>Retenidor</td><td><mark id="h2">TC 40×62×8</mark></td></tr></table><p style="color:var(--mut);margin-top:14px">Document simulat per a la demo.</p></div>
+<div class="card" id="fl">${d.f.map((f,i)=>`<div class="f"><label>${f[0]}</label><div class="v">${f[1].startsWith('Ref. no')?`<span class="pill w">No consta al document</span>`:`<input value="${f[1]}">`}<span class="ref" onclick="hl(${i})">${f[2]}</span></div></div>`).join('')}
+<div class="bar"><button class="btn" onclick="state.open=null;render()">Deixar per després</button><button class="btn p" onclick="ok(${id})">Validar dades</button></div></div></div>`}
+function hl(i){document.querySelectorAll('mark').forEach(x=>x.classList.remove('sel'));const e=document.getElementById('h'+(i-1));if(e)e.classList.add('sel')}
+function ok(id){docs.find(x=>x.id==id).st='Validat';state.open=null;render()}
+function partsView(){m.innerHTML=`<div class="tag">Dades fictícies · exemple</div><h2>Recanvis</h2><p class="sub">Peces trobades als documents validats, amb estoc i proveïdor habitual.</p><div class="card">${parts.map((p,i)=>{const low=p.stock<p.min;return `<div class="row" ${low?`onclick="ask(${i})"`:''}><div class="grow"><b>${p.r}</b> · ${p.d}<div class="m">${p.from} · ${p.sup} · ${p.lead}</div></div><div class="m">Estoc ${p.stock}/${p.min}</div>${low?`<span class="pill w">Sota mínim</span>`:`<span class="pill ok">Correcte</span>`}</div>`}).join('')}</div>`}
+function ask(i){const p=parts[i],q=p.min*2-p.stock;state.draft={i,q};nav('req')}
+function req(){const d=state.draft;if(!d){m.innerHTML=`<h2>Peticions a proveïdor</h2><p class="sub">Els esborranys apareixen aquí.</p><div class="card empty">Cap petició. Tria una peça sota mínim a Recanvis.</div>`;return}
+ const p=parts[d.i];m.innerHTML=`<h2>Petició a proveïdor</h2><p class="sub">Esborrany per revisar. No s'envia fins que l'aprovis.</p><div class="card"><div class="draft">Per a: ${p.sup}\n\nBon dia,\n\nEns caldrien ${d.q} unitats de ${p.r} (${p.d}).\nOrigen de la referència: ${p.from}.\nTermini habitual: ${p.lead}.\n\nGràcies.</div><div class="bar"><button class="btn" onclick="state.draft=null;render()">Descartar</button><button class="btn p" onclick="this.outerHTML='<span class=pill>Aprovat (simulació, no s\\'envia res)</span>'">Aprovar</button></div></div>`}
+render()
+</script></body></html>
