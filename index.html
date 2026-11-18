@@ -1,62 +1,119 @@
-<!doctype html><html lang="ca"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
-<title>Demo · Documentació tècnica i recanvis</title>
+<!doctype html>
+<html lang="ca"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<title>Documentació, recanvis i peticions · Demo Carbonell v2</title>
+<link rel="stylesheet" href="app.css">
 <style>
-:root{--bg:#f6f6f4;--card:#fff;--ink:#1d1f23;--mut:#6b7078;--line:#e6e6e2;--acc:#1f5eff;--ok:#1a7f4b;--warn:#b86e00}
-*{box-sizing:border-box}body{margin:0;font:15px/1.45 -apple-system,Segoe UI,Roboto,sans-serif;color:var(--ink);background:var(--bg);display:flex;min-height:100vh}
-nav{width:210px;background:var(--card);border-right:1px solid var(--line);padding:20px 12px;position:sticky;top:0;height:100vh;flex:none}
-nav h1{font-size:14px;margin:0 8px 18px;font-weight:650}nav small{display:block;color:var(--mut);font-weight:400;margin-top:2px}
-nav button{display:block;width:100%;text-align:left;border:0;background:none;padding:9px 10px;border-radius:8px;font:inherit;color:var(--mut);cursor:pointer}
-nav button.on{background:#eef2ff;color:var(--acc);font-weight:600}
-main{flex:1;padding:24px 28px;max-width:1100px;min-width:0}
-.tag{font-size:12px;color:var(--mut);margin-bottom:14px}h2{margin:0 0 4px;font-size:20px}p.sub{color:var(--mut);margin:0 0 18px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px}
-.row{display:flex;align-items:center;gap:12px;padding:13px 16px;border-top:1px solid var(--line);cursor:pointer}.row:first-child{border-top:0}.row:hover{background:#fafaf8}
-.row b{font-weight:600}.row .m{color:var(--mut);font-size:13px}.grow{flex:1;min-width:0}
-.pill{font-size:12px;padding:2px 9px;border-radius:99px;background:#f0f0ec;color:var(--mut);white-space:nowrap}.pill.ok{background:#e6f5ec;color:var(--ok)}.pill.w{background:#fff2dc;color:var(--warn)}
-.split{display:grid;grid-template-columns:1fr 1fr;gap:16px}.doc{padding:18px;font-size:13px;position:relative;min-height:320px}
-.doc .pg{color:var(--mut);font-size:12px;margin-bottom:10px}.doc table{width:100%;border-collapse:collapse;margin-top:8px}.doc td,.doc th{border:1px solid var(--line);padding:5px 8px;text-align:left}
-mark{background:#fff0a8;padding:0 2px;border-radius:3px}mark.sel{outline:2px solid var(--acc)}
-.f{padding:12px 16px;border-top:1px solid var(--line)}.f:first-of-type{border-top:0}.f label{display:block;font-size:12px;color:var(--mut)}
-.f .v{display:flex;gap:8px;align-items:center;justify-content:space-between}.f input{font:inherit;border:1px solid transparent;border-radius:6px;padding:3px 6px;margin-left:-6px;width:60%}.f input:focus{border-color:var(--acc);outline:0}
-.ref{font-size:12px;color:var(--acc);cursor:pointer;text-decoration:underline}
-.btn{border:1px solid var(--line);background:var(--card);padding:8px 14px;border-radius:8px;font:inherit;cursor:pointer}.btn.p{background:var(--acc);color:#fff;border-color:var(--acc)}
-.bar{display:flex;gap:8px;justify-content:flex-end;padding:12px 16px;border-top:1px solid var(--line)}
-.back{color:var(--acc);cursor:pointer;margin-bottom:10px;display:inline-block}.draft{padding:16px;white-space:pre-wrap;font-size:14px}
-.empty{padding:30px;text-align:center;color:var(--mut)}
-@media(max-width:760px){body{flex-direction:column}nav{width:100%;height:auto;position:static;display:flex;gap:4px;padding:10px;overflow-x:auto}nav h1{display:none}nav button{width:auto;white-space:nowrap}main{padding:16px}.split{grid-template-columns:1fr}}
+/* Carbonell-specific bits */
+.doc{position:relative;min-height:340px}
+.doc .pg{color:var(--mute);font-size:11px;margin-bottom:10px;letter-spacing:.06em;font-weight:650}
+.doc table{width:100%;border-collapse:collapse;margin-top:8px}
+.doc td,.doc th{border:1px solid var(--line);padding:6px 9px;text-align:left;font-size:12px}
+.doc th{background:#fafbfc}
+mark{background:#fdf0c4;padding:0 3px;border-radius:3px}
+mark.sel{outline:2px solid var(--blu)}
+.f{padding:13px 16px;border-top:1px solid var(--line2)}
+.f:first-of-type{border-top:0}
+.f label{display:block;font-size:11.5px;color:var(--mute);margin-bottom:3px}
+.f .v{display:flex;gap:10px;align-items:center;justify-content:space-between}
+.f input{font:inherit;font-size:13px;border:1px solid transparent;border-radius:7px;padding:4px 8px;margin-left:-8px;width:62%}
+.f input:focus{border-color:var(--navy);outline:2px solid #b2c3e4}
+.ref{font-size:11.5px;color:var(--blu);cursor:pointer;text-decoration:underline;white-space:nowrap}
+.split{display:grid;grid-template-columns:1.05fr 1fr;gap:16px}
+.back{color:var(--blu);cursor:pointer;margin-bottom:12px;display:inline-block;font-size:13px;font-weight:600}
+.draft{padding:16px;white-space:pre-wrap;font-size:13px;line-height:1.7;background:#fff}
+.sumcard{cursor:pointer;transition:box-shadow .12s}
+.sumcard:hover{box-shadow:var(--sh2)}
+@media(max-width:900px){.split{grid-template-columns:1fr}.doc{min-height:0}#tlm{display:block!important}}
 </style></head><body>
-<nav><h1>Documentació i recanvis<small>Demo amb dades fictícies</small></h1>
-<button data-v="docs" class="on">Documents</button><button data-v="parts">Recanvis</button><button data-v="req">Peticions a proveïdor</button></nav>
-<main id="m"></main>
-<script>
-const docs=[
+<div class="app"><aside id="side"></aside><main>
+<div class="topbar"><span id="tlm" style="display:none;font-weight:800;letter-spacing:.04em;color:var(--navy)">CARBONELL</span><span class="version">AUTOMIO · DOCUMENTACIÓ + RECANVIS v2</span><span class="sp"></span><span class="pill">DEMO · DADES FICTÍCIES</span></div>
+<div id="view"></div></main></div>
+<nav class="mob" id="mob"></nav><div class="drawer" id="dr"><div class="panel" id="pn"></div></div><div class="toast" id="toast"></div>
+<script>const C={key:'carbonell',name:'CARBONELL',contact:'Javier',today:'2026-11-18',
+nav:[['avui','Per revisar'],['docs','Documents'],['parts','Recanvis'],['req','Peticions'],['mes','Més']],
+docs:[
 {id:1,n:"Plànol conjunt reductora R-240",t:"Plànol",src:"Correu del proveïdor",st:"Per revisar",f:[["Referència","R-240-A","pàg. 1, caixetí"],["Rodament eix d'entrada","6208-2RS","pàg. 2, llista de peces, pos. 7"],["Rodament eix de sortida","22210 E","pàg. 2, llista de peces, pos. 9"],["Retenidor eix d'entrada","TC 40×62×8","pàg. 2, pos. 11"]]},
 {id:2,n:"Manual manteniment bomba B-17",t:"Manual",src:"PDF carregat a mà",st:"Per revisar",f:[["Interval de greixatge","cada 2.000 h","pàg. 14, §6.2"],["Greix recomanat","Tipus NLGI 2","pàg. 14, §6.2"],["Junta mecànica","Ref. no consta al document","—"]]},
-{id:3,n:"Fitxa tècnica motor M-55",t:"Fitxa",src:"Carpeta de la planta",st:"Validat",f:[["Potència","5,5 kW","pàg. 1"],["Rodament davanter","6309 C3","pàg. 3"]]}];
-const parts=[
+{id:3,n:"Fitxa tècnica motor M-55",t:"Fitxa",src:"Carpeta de la planta",st:"Validat",f:[["Potència","5,5 kW","pàg. 1"],["Rodament davanter","6309 C3","pàg. 3"]]},
+{id:4,n:"Esquema elèctric premsa P-12",t:"Esquema",src:"Petició a enginyeria (veure Peticions)",st:"Per revisar",f:[["Versió de l'esquema","Rev. C · 03/2025","pàg. 1, caixetí"],["Autòmat","S7-1200","pàg. 2, esquema general"]]}],
+parts:[
 {r:"6208-2RS",d:"Rodament d'una fila de boles",from:"Plànol R-240 · pos. 7",stock:2,min:4,sup:"Proveïdor A",lead:"2 dies"},
 {r:"22210 E",d:"Rodament oscil·lant de corrons",from:"Plànol R-240 · pos. 9",stock:0,min:2,sup:"Proveïdor B",lead:"5 dies"},
-{r:"TC 40×62×8",d:"Retén d'eix",from:"Plànol R-240 · pos. 11",stock:6,min:4,sup:"Proveïdor A",lead:"2 dies"},
-{r:"6309 C3",d:"Rodament motor M-55",from:"Fitxa M-55 · pàg. 3",stock:1,min:2,sup:"Proveïdor A",lead:"2 dies"}];
-const $=s=>document.querySelector(s),m=$('#m');let view='docs',state={};
-function nav(v){view=v;document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v==v));render()}
-document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>nav(b.dataset.v));
-function render(){
- if(view=='docs')return state.open?review(state.open):list();
- if(view=='parts')return partsView();
- return req()}
-function list(){m.innerHTML=`<div class="tag">Dades fictícies · exemple</div><h2>Documents</h2><p class="sub">Plànols, manuals i fitxes en un sol lloc. Tot el que s'extreu porta la pàgina d'origen i espera la teva revisió.</p>
-<div class="card">${docs.map(d=>`<div class="row" onclick="state.open=${d.id};render()"><div class="grow"><b>${d.n}</b><div class="m">${d.t} · ${d.src}</div></div><span class="pill ${d.st=='Validat'?'ok':'w'}">${d.st}</span></div>`).join('')}</div>`}
-function review(id){const d=docs.find(x=>x.id==id);
- m.innerHTML=`<span class="back" onclick="state.open=null;render()">← Documents</span><h2>${d.n}</h2><p class="sub">Revisa cada dada amb el seu origen. Res es dona per bo sense la teva confirmació.</p>
-<div class="split"><div class="card doc"><div class="pg">Previsualització · ${d.f[0][2].split(',')[0]}</div><b>LLISTA DE PECES</b><table><tr><th>Pos.</th><th>Descripció</th><th>Ref.</th></tr><tr><td>7</td><td>Rodament eix entrada</td><td><mark id="h0">6208-2RS</mark></td></tr><tr><td>9</td><td>Rodament eix sortida</td><td><mark id="h1">22210 E</mark></td></tr><tr><td>11</td><td>Retenidor</td><td><mark id="h2">TC 40×62×8</mark></td></tr></table><p style="color:var(--mut);margin-top:14px">Document simulat per a la demo.</p></div>
-<div class="card" id="fl">${d.f.map((f,i)=>`<div class="f"><label>${f[0]}</label><div class="v">${f[1].startsWith('Ref. no')?`<span class="pill w">No consta al document</span>`:`<input value="${f[1]}">`}<span class="ref" onclick="hl(${i})">${f[2]}</span></div></div>`).join('')}
-<div class="bar"><button class="btn" onclick="state.open=null;render()">Deixar per després</button><button class="btn p" onclick="ok(${id})">Validar dades</button></div></div></div>`}
-function hl(i){document.querySelectorAll('mark').forEach(x=>x.classList.remove('sel'));const e=document.getElementById('h'+(i-1));if(e)e.classList.add('sel')}
-function ok(id){docs.find(x=>x.id==id).st='Validat';state.open=null;render()}
-function partsView(){m.innerHTML=`<div class="tag">Dades fictícies · exemple</div><h2>Recanvis</h2><p class="sub">Peces trobades als documents validats, amb estoc i proveïdor habitual.</p><div class="card">${parts.map((p,i)=>{const low=p.stock<p.min;return `<div class="row" ${low?`onclick="ask(${i})"`:''}><div class="grow"><b>${p.r}</b> · ${p.d}<div class="m">${p.from} · ${p.sup} · ${p.lead}</div></div><div class="m">Estoc ${p.stock}/${p.min}</div>${low?`<span class="pill w">Sota mínim</span>`:`<span class="pill ok">Correcte</span>`}</div>`}).join('')}</div>`}
-function ask(i){const p=parts[i],q=p.min*2-p.stock;state.draft={i,q};nav('req')}
-function req(){const d=state.draft;if(!d){m.innerHTML=`<h2>Peticions a proveïdor</h2><p class="sub">Els esborranys apareixen aquí.</p><div class="card empty">Cap petició. Tria una peça sota mínim a Recanvis.</div>`;return}
- const p=parts[d.i];m.innerHTML=`<h2>Petició a proveïdor</h2><p class="sub">Esborrany per revisar. No s'envia fins que l'aprovis.</p><div class="card"><div class="draft">Per a: ${p.sup}\n\nBon dia,\n\nEns caldrien ${d.q} unitats de ${p.r} (${p.d}).\nOrigen de la referència: ${p.from}.\nTermini habitual: ${p.lead}.\n\nGràcies.</div><div class="bar"><button class="btn" onclick="state.draft=null;render()">Descartar</button><button class="btn p" onclick="this.outerHTML='<span class=pill>Aprovat (simulació, no s\\'envia res)</span>'">Aprovar</button></div></div>`}
-render()
+{r:"TC 40×62×8",d:"Retenidor d'eix",from:"Plànol R-240 · pos. 11",stock:6,min:4,sup:"Proveïdor A",lead:"2 dies"},
+{r:"6309 C3",d:"Rodament motor M-55",from:"Fitxa M-55 · pàg. 3",stock:1,min:2,sup:"Proveïdor A",lead:"2 dies"},
+{r:"JM-B17",d:"Junta mecànica bomba B-17",from:"Manual B-17 · pàg. 14 (ref. no consta)",stock:1,min:1,sup:"Proveïdor C",lead:"7 dies"}],
+info:[
+{id:'i1',what:"Esquema hidràulic actualitzat de la premsa P-12",to:"Enginyeria (intern)",asked:"fa 9 dies",hist:[["fa 9 dies","Petició feta per correu."],["fa 6 dies","Recordatori sense resposta."]]},
+{id:'i2',what:"Manual de la talladora T-3 amb la revisió vigent",to:"Proveïdor de la talladora",asked:"fa 5 dies",hist:[["fa 5 dies","Petició enviada al comercial."]]},
+{id:'i3',what:"Certificat de material de l'eix de la R-240",to:"Proveïdor A",asked:"fa 2 dies",hist:[["fa 2 dies","Petició enviada."],["ahir","Responen que l'adjunten aquesta setmana."]]}]};
+const $=s=>document.querySelector(s);const LS=C.key+'-v2';
+let D={};try{D=JSON.parse(localStorage.getItem(LS)||'{}')}catch(e){}
+let state={route:'avui',tab:'sup',open:null};
+let drafts=[];try{drafts=JSON.parse(localStorage.getItem(LS+'-drafts')||'[]')}catch(e){}
+function saveAll(){try{localStorage.setItem(LS,JSON.stringify(D));localStorage.setItem(LS+'-drafts',JSON.stringify(drafts))}catch(e){}}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function toast(t){const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(e._t);e._t=setTimeout(()=>e.style.display='none',2600)}
+function go(r,x){state.route=r;if(x&&x.tab)state.tab=x.tab;closeDr();render();window.scrollTo(0,0)}
+function icon(k){const paths={inbox:'M3 4h18v15H3z M3 12h5l2 3h4l2-3h5',doc:'M6 2h9l5 5v15H6z M14 2v6h6',gear:'M12 8a4 4 0 100 8 4 4 0 000-8z M12 2v3m0 14v3M2 12h3m14 0h3M4.9 4.9l2.1 2.1m9.9 9.9l2.1 2.1m0-14.1l-2.1 2.1M7 17l-2.1 2.1',send:'M22 2L11 13M22 2l-7 20-4-9-9-4z',more:'M4 6h16M4 12h16M4 18h16'};return `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${paths[k]||paths.more}"/></svg>`}
+const ICONS={avui:'inbox',docs:'doc',parts:'gear',req:'send',mes:'more'};
+function pendingCount(){return C.docs.filter(d=>d.st==='Per revisar'&&!D['doc'+d.id]).length+C.parts.filter(p=>p.stock<p.min).length+C.info.filter(i=>!D[i.id]).length}
+function navHTML(){return C.nav.map(([k,t])=>`<a role="button" tabindex="0" class="${state.route===k?'on':''}" onclick="go('${k}')" onkeydown="if(event.key==='Enter')go('${k}')"><span class="navicon">${icon(ICONS[k])}</span>${t}${k==='avui'?`<span class="n">${pendingCount()}</span>`:''}</a>`).join('')}
+function nav(){$('#side').innerHTML=`<div class="brand"><div style="font-weight:800;font-size:19px;letter-spacing:.04em;color:var(--navy)">CARBONELL</div><small>ASSISTENT DE COMPRES I RECANVIS</small></div><div class="nav-section">OPERACIONS</div>${navHTML()}<div class="side-foot"><div class="identity"><span class="avatar">J</span><div>Javier<br><span class="mut">Entorn de demostració</span></div></div><div class="independent">Demo independent · Dades fictícies<br>No connectada al correu ni a l'ERP</div></div>`;$('#mob').innerHTML=navHTML()}
+function closeDr(){$('#dr').classList.remove('on')}
+$('#dr').addEventListener('click',e=>{if(e.target.id==='dr')closeDr()});
+function openDr(h){$('#pn').innerHTML=h;$('#dr').classList.add('on')}
+/* ------- Avui ------- */
+function vAvui(){const docsP=C.docs.filter(d=>d.st==='Per revisar'&&!D['doc'+d.id]);const partsP=C.parts.filter(p=>p.stock<p.min);const infoP=C.info.filter(i=>!D[i.id]);
+ let h=`<div class="heading"><div class="eyebrow">COMPRES / RECANVIS / DOCUMENTACIÓ</div><h1>Per revisar</h1><div class="sub">El que necessita la teva decisió avui. Res no s'envia ni es valida sense tu.</div></div>`;
+ h+=`<div class="grid k3" style="margin-bottom:16px">
+ <div class="card kpi sumcard" onclick="go('docs')"><b>${docsP.length}</b><span>Documents per validar</span></div>
+ <div class="card kpi ${partsP.length?'warn':''} sumcard" onclick="go('parts')"><b>${partsP.length}</b><span>Recanvis sota mínim</span></div>
+ <div class="card kpi ${infoP.length?'bad':''} sumcard" onclick="go('req',{tab:'info'})"><b>${infoP.length}</b><span>Peticions d'informació obertes</span></div></div>`;
+ h+=`<div class="card"><h2>Cua del dia</h2>`;
+ if(docsP.length)h+=docsP.map(d=>`<div class="item"><span class="dot d-blu"></span><div class="b"><b>${esc(d.n)}</b><div class="small mut">${d.t} · ${esc(d.src)} · espera la teva validació</div></div><button class="btn ghost" onclick="openDoc(${d.id})">Revisar</button></div>`).join('');
+ if(partsP.length)h+=partsP.map((p)=>`<div class="item"><span class="dot d-amb"></span><div class="b"><b>${esc(p.r)}</b> · ${esc(p.d)}<div class="small mut">Estoc ${p.stock}/${p.min} · ${esc(p.sup)} · ${esc(p.lead)}</div></div><button class="btn ghost" onclick="ask('${esc(p.r)}')">Preparar petició</button></div>`).join('');
+ if(infoP.length)h+=infoP.map(i=>`<div class="item"><span class="dot d-red"></span><div class="b"><b>${esc(i.what)}</b><div class="small mut">${esc(i.to)} · demanat ${esc(i.asked)}</div></div><button class="btn ghost" onclick="remindInfo('${i.id}')">Preparar recordatori</button></div>`).join('');
+ if(!docsP.length&&!partsP.length&&!infoP.length)h+=`<div class="empty">Tot revisat. No queda res pendent.</div>`;
+ h+=`</div><p class="small mut" style="margin-top:14px">Aprovar registra la decisió en local. En aquesta demo no s'envia cap correu ni s'escriu a cap sistema.</p>`;
+ $('#view').innerHTML=h}
+/* ------- Documents ------- */
+function vDocs(){$('#view').innerHTML=`<div class="heading"><div class="eyebrow">DOCUMENTACIÓ TÈCNICA</div><h1>Documents</h1><div class="sub">Plànols, manuals i fitxes en un sol lloc. Cada dada extreta porta la pàgina d'origen i espera la teva revisió.</div></div><div class="card">${C.docs.map(d=>{const done=D['doc'+d.id];return `<div class="item" style="cursor:pointer" onclick="openDoc(${d.id})"><span class="dot ${d.st==='Validat'||done?'d-grn':'d-amb'}"></span><div class="b"><b>${esc(d.n)}</b><div class="small mut">${d.t} · ${esc(d.src)}</div></div><span class="tag ${d.st==='Validat'||done?'t-grn':'t-amb'}">${done?'Validat':esc(d.st)}</span></div>`}).join('')}</div>`}
+function openDoc(id){const d=C.docs.find(x=>x.id===id);if(!d)return;const done=D['doc'+id];
+ const prev=`<div class="pg">PREVISUALITZACIÓ SIMULADA · ${esc(d.f[0][2].split(',')[0])}</div><b>LLISTA DE PECES</b><table><tr><th>Pos.</th><th>Descripció</th><th>Ref.</th></tr><tr><td>7</td><td>Rodament eix entrada</td><td><mark id="h1">6208-2RS</mark></td></tr><tr><td>9</td><td>Rodament eix sortida</td><td><mark id="h2">22210 E</mark></td></tr><tr><td>11</td><td>Retenidor</td><td><mark id="h3">TC 40×62×8</mark></td></tr></table><p class="mut small" style="margin-top:14px">Document simulat per a la demo. En producció veuries el PDF real amb els camps ressaltats a sobre.</p>`;
+ const fields=d.f.map((f,i)=>`<div class="f"><label>${esc(f[0])}</label><div class="v">${f[1].startsWith('Ref. no')?`<span class="tag t-amb">No consta al document</span>`:`<input value="${esc(f[1])}" ${done?'disabled':''}>`}<span class="ref" onclick="hl(${i})">${esc(f[2])}</span></div></div>`).join('');
+ openDr(`<button class="x" onclick="closeDr()" aria-label="Tanca">×</button><span class="tag ${d.st==='Validat'||done?'t-grn':'t-amb'}">${done?'Validat':esc(d.st)}</span><h2 style="margin:10px 0 4px">${esc(d.n)}</h2><div class="mut small">${d.t} · ${esc(d.src)}</div><p class="small mut" style="margin:10px 0 16px">Revisa cada dada amb el seu origen. Res es dona per bo sense la teva confirmació.</p><div class="split"><div class="card doc">${prev}</div><div class="card" style="padding:4px 0">${fields}<div class="act" style="padding:12px 16px">${done?`<span class="dec">Validat · ${done.ts}</span> <button class="btn ghost" onclick="undoDoc(${id})">Desfés</button>`:`<button class="btn ghost" onclick="closeDr()">Deixar per després</button><button class="btn" onclick="okDoc(${id})">Validar dades</button>`}</div></div></div>`)}
+function hl(i){document.querySelectorAll('mark').forEach(x=>x.classList.remove('sel'));const e=document.getElementById('h'+i);if(e){e.classList.add('sel');e.scrollIntoView({block:'center'})}}
+function okDoc(id){D['doc'+id]={ts:new Date().toLocaleString('ca-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})};saveAll();closeDr();toast('Document validat. Registrat en local.');render()}
+function undoDoc(id){delete D['doc'+id];saveAll();closeDr();toast('Validació desfeta');render()}
+/* ------- Recanvis ------- */
+function vParts(){$('#view').innerHTML=`<div class="heading"><div class="eyebrow">MAGATZEM</div><h1>Recanvis</h1><div class="sub">Peces trobades als documents validats, amb estoc i proveïdor habitual. Preparar una petició no l'envia: passa per la teva aprovació.</div></div><div class="card tw"><table><thead><tr><th>Referència</th><th>Origen</th><th>Proveïdor</th><th>Estoc</th><th>Estat</th><th></th></tr></thead><tbody>${C.parts.map(p=>{const low=p.stock<p.min;return `<tr><td><b>${esc(p.r)}</b><div class="small mut">${esc(p.d)}</div></td><td class="small mut">${esc(p.from)}</td><td class="small">${esc(p.sup)} · ${esc(p.lead)}</td><td>${p.stock} / ${p.min}</td><td><span class="tag ${low?'t-red':'t-grn'}">${low?'Sota mínim':'Correcte'}</span></td><td>${low?`<button class="btn ghost" onclick="ask('${esc(p.r)}')">Preparar petició</button>`:''}</td></tr>`}).join('')}</tbody></table></div>`}
+function ask(ref){const p=C.parts.find(x=>x.r===ref);if(!p)return;const q=p.min*2-p.stock;
+ if(!drafts.some(d=>d.ref===ref&&!D['draft-'+ref])){drafts.push({kind:'sup',ref,body:`Per a: ${p.sup}\nAssumpte: Petició de recanvis ${p.r}\n\nBon dia,\n\nEns caldrien ${q} unitats de ${p.r} (${p.d}).\nOrigen de la referència: ${p.from}.\nTermini habitual: ${p.lead}.\n\nGràcies.`});saveAll()}
+ go('req',{tab:'sup'});toast('Esborrany preparat a Peticions')}
+/* ------- Peticions ------- */
+function vReq(){const t=state.tab;let h=`<div class="heading"><div class="eyebrow">SORTINTS</div><h1>Peticions</h1><div class="sub">Esborranys preparats per revisar. Aprovar registra la decisió; en aquesta demo no s'envia res.</div></div><div class="tabs">${[['sup','A proveïdor'],['info',"D'informació"]].map(([k,tt])=>`<button class="${t===k?'on':''}" onclick="state.tab='${k}';render()">${tt}</button>`).join('')}</div><div id="mb"></div>`;
+ $('#view').innerHTML=h;const mb=$('#mb');
+ if(t==='sup'){const open=drafts.filter(d=>!D['draft-'+d.ref]);const done=drafts.filter(d=>D['draft-'+d.ref]);
+  let x=open.length?open.map(d=>`<div class="card" style="margin-bottom:12px"><div class="headrow"><h3>Petició de recanvis ${esc(d.ref)}</h3><span class="tag t-amb">Esborrany</span></div><div class="mailprev"><div class="draft" id="db-${esc(d.ref)}" contenteditable="true">${esc(d.body)}</div></div><div class="act"><button class="btn ghost" onclick="discardDraft('${esc(d.ref)}')">Descartar</button><button class="btn" onclick="approveDraft('${esc(d.ref)}')">Aprovar (simulació)</button></div></div>`).join(''):`<div class="card empty">Cap petició pendent. Tria una peça sota mínim a Recanvis.</div>`;
+  if(done.length)x+=`<div class="card"><h2>Registre</h2>${done.map(d=>{const dd=D['draft-'+d.ref];return `<div class="item"><span class="dot ${dd.action==='aprovada'?'d-grn':'d-red'}"></span><div class="b"><b>Petició ${esc(d.ref)}</b><div class="small"><span class="dec ${dd.action==='aprovada'?'':'rej'}">${dd.action==='aprovada'?'Aprovada (no enviada)':'Descartada'}</span> · ${dd.ts}</div></div></div>`}).join('')}</div>`;
+  mb.innerHTML=x;return}
+ let x=C.info.map(i=>{const dd=D[i.id];return `<div class="card" style="margin-bottom:12px"><div class="headrow"><div><h3>${esc(i.what)}</h3><div class="small mut">${esc(i.to)} · demanat ${esc(i.asked)}</div></div>${dd?`<span class="tag t-grn">Recordatori aprovat</span>`:`<button class="btn ghost" onclick="remindInfo('${i.id}')">Preparar recordatori</button>`}</div><ul class="tl" style="margin-top:12px">${i.hist.map(h=>`<li><b>${esc(h[0])}</b> · ${esc(h[1])}</li>`).join('')}</ul>${dd?`<div class="small dec" style="margin-top:8px">Aprovat ${dd.ts} · no s'ha enviat res</div>`:''}</div>`}).join('');
+ mb.innerHTML=x||`<div class="card empty">Cap petició d'informació oberta.</div>`}
+function discardDraft(ref){const el=document.getElementById('db-'+CSS.escape(ref));if(el){const d=drafts.find(x=>x.ref===ref);if(d)d.body=el.innerText}
+ D['draft-'+ref]={action:'descartada',ts:new Date().toLocaleString('ca-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})};saveAll();toast('Esborrany descartat');render()}
+function approveDraft(ref){const el=document.getElementById('db-'+CSS.escape(ref));if(el){const d=drafts.find(x=>x.ref===ref);if(d)d.body=el.innerText}
+ D['draft-'+ref]={action:'aprovada',ts:new Date().toLocaleString('ca-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})};saveAll();toast("Aprovat. En producció quedaria a punt per enviar; aquí no s’envia res.");render()}
+function remindInfo(id){const i=C.info.find(x=>x.id===id);if(!i)return;
+ openDr(`<button class="x" onclick="closeDr()" aria-label="Tanca">×</button><span class="tag t-amb">Recordatori</span><h2 style="margin:10px 0 4px">${esc(i.what)}</h2><div class="mut small">${esc(i.to)} · demanat ${esc(i.asked)}</div><ul class="tl" style="margin-top:14px">${i.hist.map(h=>`<li><b>${esc(h[0])}</b> · ${esc(h[1])}</li>`).join('')}</ul><h3 style="margin:16px 0 6px">Esborrany preparat (editable)</h3><textarea id="rem-body">Bon dia,\n\nUs torno a escriure sobre: ${i.what}. Ho vam demanar ${i.asked} i encara no l'hem rebut.\n\nEns fa falta per tancar el manteniment d'aquesta setmana. Ens podeu confirmar quan el tindrem?\n\nGràcies,\nJavier\nCarbonell (demo)</textarea><div class="act"><button class="btn ghost" onclick="closeDr()">Deixar per després</button><button class="btn" onclick="approveRem('${id}')">Aprovar (simulació)</button></div><p class="small mut">Aprovar registra la decisió en local. No s'envia cap correu.</p>`)}
+function approveRem(id){D[id]={action:'aprovada',ts:new Date().toLocaleString('ca-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})};saveAll();closeDr();toast("Recordatori aprovat. No s’ha enviat res.");render()}
+/* ------- Més ------- */
+function vMes(){$('#view').innerHTML=`<div class="heading"><h1>Més</h1></div><div class="card"><h2>Què és real i què és simulat</h2><p class="small">Maqueta independent per a la reunió del 19/11 amb el Javier. Totes les dades són fictícies: documents, estocs, proveïdors i peticions. No està connectada al correu, a l'ERP ni a cap carpeta; aprovar només registra la decisió dins d'aquest navegador.</p><p class="small">El que sí és real és el flux: cada dada extreta d'un document porta la pàgina d'origen, tot espera revisió humana i cada esborrany s'aprova abans d'enviar-se.</p></div><div class="card" style="margin-top:14px"><h2>Per què aquesta demo</h2><p class="small">A la primera conversa el Javier va traslladar que porta compres, recanvis i logística, i que sovint demana plànols, manuals i informació i no rep resposta: ho acaba fent tot a mà. Per això la demo posa al centre tres coses: la documentació validada amb origen, els recanvis amb estoc i mínims, i les peticions d'informació amb historial i recordatoris preparats.</p></div><div class="act"><button class="btn ghost" onclick="resetAll()">Reiniciar la demo</button></div>`}
+function resetAll(){if(!confirm('Esborra les decisions locals i reinicia la demo?'))return;D={};drafts=[];saveAll();toast('Demo reiniciada');go('avui')}
+function render(){nav();({avui:vAvui,docs:vDocs,parts:vParts,req:vReq,mes:vMes}[state.route]||vAvui)()}
+const _pv=new URLSearchParams(location.search);
+if(_pv.get('v'))state.route=_pv.get('v');
+if(_pv.get('t'))state.tab=_pv.get('t');
+render();
+if(_pv.get('doc'))openDoc(Number(_pv.get('doc')));
+
 </script></body></html>
