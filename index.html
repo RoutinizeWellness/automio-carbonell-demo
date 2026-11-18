@@ -1,206 +1,583 @@
 <!doctype html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
-<title>Del plano a la compra · Demo Carbonell v4</title>
-<link rel="stylesheet" href="app.css">
-<style>
-/* Carbonell-specific bits */
-.doc{position:relative;min-height:340px}
-.doc .pg{color:var(--mute);font-size:11px;margin-bottom:10px;letter-spacing:.06em;font-weight:650}
-.doc table{width:100%;border-collapse:collapse;margin-top:8px}
-.doc td,.doc th{border:1px solid var(--line);padding:6px 9px;text-align:left;font-size:12px}
-.doc th{background:#fafbfc}
-.doc td.miss{color:var(--red,#b42318);font-weight:650}
-mark{background:#fdf0c4;padding:0 3px;border-radius:3px}
-mark.sel{outline:2px solid var(--blu)}
-.f{padding:13px 16px;border-top:1px solid var(--line2)}
-.f:first-of-type{border-top:0}
-.f label{display:block;font-size:11.5px;color:var(--mute);margin-bottom:3px}
-.f .v{display:flex;gap:10px;align-items:center;justify-content:space-between}
-.f input{font:inherit;font-size:13px;border:1px solid transparent;border-radius:7px;padding:4px 8px;margin-left:-8px;width:62%}
-.f input:focus{border-color:var(--navy);outline:2px solid #b2c3e4}
-.ref{font-size:11.5px;color:var(--blu);cursor:pointer;text-decoration:underline;white-space:nowrap}
-.split{display:grid;grid-template-columns:1.05fr 1fr;gap:16px}
-.back{color:var(--blu);cursor:pointer;margin-bottom:12px;display:inline-block;font-size:13px;font-weight:600}
-.draft{padding:16px;white-space:pre-wrap;font-size:13px;line-height:1.7;background:#fff}
-.sumcard{cursor:pointer;transition:box-shadow .12s}
-.sumcard:hover{box-shadow:var(--sh2)}
-.chk{display:flex;gap:9px;align-items:flex-start;padding:9px 2px;border-top:1px solid var(--line2);font-size:13px}
-.chk:first-of-type{border-top:0}
-.chk .ic{flex:none;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;margin-top:1px}
-.chk.ok .ic{background:#e4f4ea;color:#067647}
-.chk.ko .ic{background:#fde8e6;color:#b42318}
-.chk.ko{color:#101828}
-.chk.ko .why{display:block;font-size:11.5px;color:var(--mute);margin-top:2px}
-.qa{border-top:1px solid var(--line2);margin-top:6px;padding-top:12px}
-.qa .chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}
-.qa .chip{border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:12px;cursor:pointer;background:#fff;color:var(--navy)}
-.qa .chip:hover{border-color:var(--navy)}
-.qa .q{font-size:12.5px;font-weight:700;color:var(--navy);margin:10px 0 3px}
-.qa .a{font-size:13px;line-height:1.55;color:#344054}
-.qa .a .refp{display:block;font-size:11.5px;color:var(--mute);margin-top:3px}
-.qa form{display:flex;gap:8px;margin-top:10px}
-.qa input{flex:1;font:inherit;font-size:13px;border:1px solid var(--line);border-radius:8px;padding:7px 10px}
-.qa input:focus{border-color:var(--navy);outline:2px solid #b2c3e4}
-@media(max-width:900px){.split{grid-template-columns:1fr}.doc{min-height:0}#tlm{display:block!important}}
-</style></head><body>
-<div class="app"><aside id="side"></aside><main>
-<div class="topbar"><span id="tlm" style="display:none;font-weight:800;letter-spacing:.04em;color:var(--navy)">CARBONELL</span><span class="version">AUTOMIO · DEL PLANO A LA COMPRA v4</span><span class="sp"></span><span class="pill">DEMO · DATOS FICTICIOS</span></div>
-<div id="view"></div></main></div>
-<nav class="mob" id="mob"></nav><div class="drawer" id="dr"><div class="panel" id="pn"></div></div><div class="toast" id="toast"></div>
-<script>const C={key:'carbonell',name:'CARBONELL',contact:'Javier',today:'2026-11-18',
-nav:[['hoy','Por revisar'],['planos','Planos'],['compra','Compra'],['recambios','Recambios'],['peticiones','Peticiones'],['mas','Más']],
-planos:[
-{id:1,n:"Plano de conjunto reductora R-240",t:"Plano",src:"Oficina técnica (interno)",st:"Con problemas",
- checks:[["Número de revisión vigente indicado",false,"El cajetín llega sin el campo de revisión","No consta la revisión vigente del plano: el cajetín llega sin ese campo"],["Lista de piezas completa",false,"Falta el retenedor del eje de entrada (pos. 11)","La lista de piezas no incluye el retenedor del eje de entrada (pos. 11)"],["Cotas principales legibles",true,""],["Firma del responsable de oficina técnica",false,"El cajetín llega sin firmar","Falta la firma del responsable de oficina técnica"]],
- pv:{cap:"pág. 2 · lista de piezas",rows:[["7","Rodamiento eje entrada","6208-2RS",1],["9","Rodamiento eje salida","22210 E",2],["11","Retenedor eje entrada","NO CONSTA",3]]},
- f:[["Referencia del conjunto","R-240-A","pág. 1, cajetín"],["Rodamiento eje de entrada","6208-2RS","pág. 2, lista de piezas, pos. 7"],["Rodamiento eje de salida","22210 E","pág. 2, lista de piezas, pos. 9"],["Retenedor eje de entrada","No consta en la lista de piezas","—"]],
- qa:[{kws:["rodamiento","entrada"],q:"¿Qué rodamiento lleva el eje de entrada?",a:"Un 6208-2RS.",p:"pág. 2, lista de piezas, pos. 7"},
-     {kws:["retenedor","reten"],q:"¿Y el retenedor del eje de entrada?",a:"No consta en la lista de piezas que ha pasado oficina técnica. Es uno de los problemas detectados: conviene pedir la lista corregida antes de comprar el recambio.",p:"problema detectado en la revisión automática"},
-     {kws:["revisión","revision","versión","version","vigente"],q:"¿Qué revisión del plano es la vigente?",a:"No se indica en el documento recibido. Está marcado como problema y forma parte de la devolución preparada a oficina técnica.",p:"cajetín de la pág. 1, campo vacío"}],bom:[{pos:"7",ref:"6208-2RS",desc:"Rodamiento rígido de bolas · eje de entrada",qty:2,sup:"Proveedor A",lead:"2 días",p:18.40,src:"pág. 2, lista de piezas, pos. 7"},{pos:"9",ref:"22210 E",desc:"Rodamiento oscilante de rodillos · eje de salida",qty:2,sup:"Proveedor B",lead:"5 días",p:46.90,src:"pág. 2, lista de piezas, pos. 9"},{pos:"11",ref:null,desc:"Retenedor del eje de entrada",qty:1,blocked:"La lista recibida no incluye la referencia. Falta la versión corregida de oficina técnica (devolución preparada).",src:"pág. 2, pos. 11 · no consta"}]},
-{id:2,n:"Plano de conjunto prensa P-12",t:"Plano",src:"Pedido a oficina técnica hace 9 días",st:"Pedido · sin respuesta",checks:[],pv:null,f:[],qa:[],req:'i1'},
-{id:3,n:"Esquema eléctrico prensa P-12",t:"Esquema",src:"Oficina técnica (interno)",st:"Por revisar",
- checks:[["Número de revisión indicado: Rev. C · 03/2025",true,""],["Leyenda de símbolos completa",true,""],["Firma del responsable",true,""]],
- pv:{cap:"pág. 2 · esquema general",rows:[["—","Autómata","S7-1200",1],["—","Alimentación","24 V DC",0]]},
- f:[["Versión del esquema","Rev. C · 03/2025","pág. 1, cajetín"],["Autómata","S7-1200","pág. 2, esquema general"]],
- qa:[{kws:["autómata","automata","plc"],q:"¿Qué autómata lleva la prensa P-12?",a:"Un S7-1200.",p:"pág. 2, esquema general"},
-     {kws:["revisión","revision","versión","version"],q:"¿Qué revisión del esquema es esta?",a:"La Rev. C de 03/2025, indicada en el cajetín.",p:"pág. 1, cajetín"}],bom:[{pos:"—",ref:"6ES7214-1AG40",desc:"Autómata S7-1200 (CPU 1214C)",qty:1,sup:"Proveedor B",lead:"5 días",p:389.00,src:"pág. 2, esquema general"},{pos:"—",ref:"PSU-2410",desc:"Fuente de alimentación 24 V DC · 10 A",qty:1,sup:"Proveedor B",lead:"5 días",p:96.50,src:"pág. 2, esquema general"}]},
-{id:4,n:"Manual de mantenimiento bomba B-17",t:"Manual",src:"PDF subido a mano",st:"Por revisar",
- checks:[["Documento completo (índice y 38 páginas)",true,""],["Referencia de la junta mecánica indicada",false,"En la pág. 14 se menciona la junta pero sin referencia","La junta mecánica se menciona sin referencia (pág. 14)"]],
- pv:{cap:"pág. 14 · §6.2 lubricación",rows:[["—","Intervalo de engrase","cada 2.000 h",0],["—","Grasa recomendada","NLGI 2",1]]},
- f:[["Intervalo de engrase","cada 2.000 h","pág. 14, §6.2"],["Grasa recomendada","Tipo NLGI 2","pág. 14, §6.2"],["Junta mecánica","No consta en el documento","—"]],
- qa:[{kws:["engras","grasa","lubrica"],q:"¿Cada cuánto hay que engrasar la bomba B-17?",a:"Cada 2.000 horas, con grasa tipo NLGI 2.",p:"pág. 14, §6.2"},
-     {kws:["junta"],q:"¿Qué junta mecánica lleva la bomba?",a:"La referencia no consta en el manual. Habría que pedirla al proveedor antes de hacer el pedido.",p:"pág. 14, mencionada sin referencia"}],bom:[{pos:"—",ref:"GRASA-NLGI2-18",desc:"Grasa NLGI 2 (cubo 18 kg)",qty:1,sup:"Proveedor C",lead:"7 días",p:74.20,src:"pág. 14, §6.2"},{pos:"—",ref:null,desc:"Junta mecánica bomba B-17",qty:1,blocked:"La referencia no consta en el manual. Hay que pedirla al proveedor antes de comprar.",src:"pág. 14 · no consta"}]},
-{id:5,n:"Ficha técnica motor M-55",t:"Ficha",src:"Carpeta de la planta",st:"Validado",
- checks:[["Datos de placa completos",true,""],["Referencia de rodamientos indicada",true,""]],
- pv:{cap:"pág. 3 · rodamientos",rows:[["—","Rodamiento delantero","6309 C3",1]]},
- f:[["Potencia","5,5 kW","pág. 1"],["Rodamiento delantero","6309 C3","pág. 3"]],
- qa:[{kws:["rodamiento"],q:"¿Qué rodamiento delantero lleva el motor M-55?",a:"Un 6309 C3.",p:"pág. 3"},
-     {kws:["potencia"],q:"¿Qué potencia tiene el motor M-55?",a:"5,5 kW.",p:"pág. 1, datos de placa"}],bom:[{pos:"—",ref:"6309 C3",desc:"Rodamiento delantero del motor",qty:2,sup:"Proveedor A",lead:"2 días",p:21.75,src:"pág. 3"}]}],
-parts:[
-{r:"6208-2RS",d:"Rodamiento rígido de bolas",from:"Plano R-240 · pos. 7",stock:2,min:4,sup:"Proveedor A",lead:"2 días"},
-{r:"22210 E",d:"Rodamiento oscilante de rodillos",from:"Plano R-240 · pos. 9",stock:0,min:2,sup:"Proveedor B",lead:"5 días"},
-{r:"TC 40×62×8",d:"Retenedor de eje",from:"Plano R-240 · pos. 11 (no consta en la lista recibida)",stock:6,min:4,sup:"Proveedor A",lead:"2 días"},
-{r:"6309 C3",d:"Rodamiento motor M-55",from:"Ficha M-55 · pág. 3",stock:1,min:2,sup:"Proveedor A",lead:"2 días"},
-{r:"JM-B17",d:"Junta mecánica bomba B-17",from:"Manual B-17 · pág. 14 (ref. no consta)",stock:1,min:1,sup:"Proveedor C",lead:"7 días"}],
-info:[
-{id:'i1',what:"Plano de conjunto de la prensa P-12 (revisión vigente)",to:"Oficina técnica (interno)",asked:"hace 9 días",hist:[["hace 9 días","Pedido por correo."],["hace 6 días","Recordatorio sin respuesta."]]},
-{id:'i2',what:"Manual de la talladora T-3 con la revisión vigente",to:"Proveedor de la talladora",asked:"hace 5 días",hist:[["hace 5 días","Petición enviada al comercial."]]},
-{id:'i3',what:"Certificado de material del eje de la R-240",to:"Proveedor A",asked:"hace 2 días",hist:[["hace 2 días","Petición enviada."],["ayer","Responden que lo adjuntan esta semana."]]}]};
-const $=s=>document.querySelector(s);const LS=C.key+'-v4';
-let D={};try{D=JSON.parse(localStorage.getItem(LS)||'{}')}catch(e){}
-let state={route:'hoy',tab:'sup',open:null};
-let drafts=[];try{drafts=JSON.parse(localStorage.getItem(LS+'-drafts')||'[]')}catch(e){}
-function saveAll(){try{localStorage.setItem(LS,JSON.stringify(D));localStorage.setItem(LS+'-drafts',JSON.stringify(drafts))}catch(e){}}
-function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
-function toast(t){const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(e._t);e._t=setTimeout(()=>e.style.display='none',2600)}
-function go(r,x){state.route=r;if(x&&x.tab)state.tab=x.tab;closeDr();render();window.scrollTo(0,0)}
-function icon(k){const paths={inbox:'M3 4h18v15H3z M3 12h5l2 3h4l2-3h5',doc:'M6 2h9l5 5v15H6z M14 2v6h6',gear:'M12 8a4 4 0 100 8 4 4 0 000-8z M12 2v3m0 14v3M2 12h3m14 0h3M4.9 4.9l2.1 2.1m9.9 9.9l2.1 2.1m0-14.1l-2.1 2.1M7 17l-2.1 2.1',send:'M22 2L11 13M22 2l-7 20-4-9-9-4z',more:'M4 6h16M4 12h16M4 18h16',cart:'M3 3h2l2.6 12.4A2 2 0 009.6 17h8.8a2 2 0 001.95-1.55L22 7H6M9 21a1 1 0 100-2 1 1 0 000 2zM18 21a1 1 0 100-2 1 1 0 000 2z'};return `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${paths[k]||paths.more}"/></svg>`}
-const ICONS={hoy:'inbox',planos:'doc',compra:'cart',recambios:'gear',peticiones:'send',mas:'more'};
-function planosPend(){return C.planos.filter(d=>(d.st==='Por revisar'||d.st==='Con problemas')&&!D['doc'+d.id])}
-function validated(d){return !!(D['doc'+d.id]||d.st==='Validado')}
-function listasPend(){return C.planos.filter(d=>d.bom&&validated(d)&&!D['lc'+d.id])}
-function pendingCount(){return planosPend().length+listasPend().length+C.parts.filter(p=>p.stock<p.min).length+C.info.filter(i=>!D[i.id]).length}
-function navHTML(){return C.nav.map(([k,t])=>`<a role="button" tabindex="0" class="${state.route===k?'on':''}" onclick="go('${k}')" onkeydown="if(event.key==='Enter')go('${k}')"><span class="navicon">${icon(ICONS[k])}</span>${t}${k==='hoy'?`<span class="n">${pendingCount()}</span>`:''}</a>`).join('')}
-function nav(){$('#side').innerHTML=`<div class="brand"><div style="font-weight:800;font-size:19px;letter-spacing:.04em;color:var(--navy)">CARBONELL</div><small>ASISTENTE DE COMPRAS Y RECAMBIOS</small></div><div class="nav-section">OPERACIONES</div>${navHTML()}<div class="side-foot"><div class="identity"><span class="avatar">J</span><div>Javier<br><span class="mut">Entorno de demostración</span></div></div><div class="independent">Demo independiente · Datos ficticios<br>No conectada al correo ni al ERP</div></div>`;$('#mob').innerHTML=navHTML()}
-function closeDr(){$('#dr').classList.remove('on')}
-$('#dr').addEventListener('click',e=>{if(e.target.id==='dr')closeDr()});
-function openDr(h){$('#pn').innerHTML=h;$('#dr').classList.add('on')}
-function tagOf(d,done){if(done||d.st==='Validado')return `<span class="tag t-grn">Validado</span>`;if(d.st==='Con problemas')return `<span class="tag t-red">Con problemas</span>`;if(d.st.indexOf('Pedido')===0)return `<span class="tag t-amb">${esc(d.st)}</span>`;return `<span class="tag t-amb">${esc(d.st)}</span>`}
-/* ------- Hoy ------- */
-function vHoy(){const docsP=planosPend();const partsP=C.parts.filter(p=>p.stock<p.min);const infoP=C.info.filter(i=>!D[i.id]);const lcP=listasPend();
- let h=`<div class="heading"><div class="eyebrow">COMPRAS / RECAMBIOS / PLANOS</div><h1>Por revisar</h1><div class="sub">Lo que necesita tu decisión hoy. Nada se envía ni se valida sin ti.</div></div>`;
- h+=`<div class="grid k3" style="margin-bottom:16px">
- <div class="card kpi ${docsP.some(d=>d.st==='Con problemas')?'bad':''} sumcard" onclick="go('planos')"><b>${docsP.length}</b><span>Planos y documentos por validar${docsP.some(d=>d.st==='Con problemas')?' · 1 con problemas':''}</span></div>
- <div class="card kpi ${partsP.length?'warn':''} sumcard" onclick="go('recambios')"><b>${partsP.length}</b><span>Recambios bajo mínimo</span></div>
- <div class="card kpi ${infoP.length?'bad':''} sumcard" onclick="go('peticiones',{tab:'info'})"><b>${infoP.length}</b><span>Peticiones de información abiertas</span></div></div>`;
- h+=`<div class="card"><h2>Cola del día</h2>`;
- if(docsP.length)h+=docsP.map(d=>`<div class="item"><span class="dot ${d.st==='Con problemas'?'d-red':'d-blu'}"></span><div class="b"><b>${esc(d.n)}</b><div class="small mut">${d.t} · ${esc(d.src)} · ${d.st==='Con problemas'?'se han detectado problemas en la revisión automática':'espera tu validación'}</div></div><button class="btn ghost" onclick="openPlano(${d.id})">Revisar</button></div>`).join('');
- if(lcP.length)h+=lcP.map(d=>`<div class="item"><span class="dot d-blu"></span><div class="b"><b>Lista de compra · ${esc(d.n)}</b><div class="small mut">Generada del plano validado · ${d.bom.filter(l=>!l.blocked).length} línea${d.bom.filter(l=>!l.blocked).length>1?'s':''} · pendiente de tu revisión</div></div><button class="btn ghost" onclick="go('compra')">Revisar</button></div>`).join('');
- if(partsP.length)h+=partsP.map((p)=>`<div class="item"><span class="dot d-amb"></span><div class="b"><b>${esc(p.r)}</b> · ${esc(p.d)}<div class="small mut">Stock ${p.stock}/${p.min} · ${esc(p.sup)} · ${esc(p.lead)}</div></div><button class="btn ghost" onclick="ask('${esc(p.r)}')">Preparar petición</button></div>`).join('');
- if(infoP.length)h+=infoP.map(i=>`<div class="item"><span class="dot d-red"></span><div class="b"><b>${esc(i.what)}</b><div class="small mut">${esc(i.to)} · pedido ${esc(i.asked)}</div></div><button class="btn ghost" onclick="remindInfo('${i.id}')">Preparar recordatorio</button></div>`).join('');
- if(!docsP.length&&!lcP.length&&!partsP.length&&!infoP.length)h+=`<div class="empty">Todo revisado. No queda nada pendiente.</div>`;
- h+=`</div><p class="small mut" style="margin-top:14px">Aprobar registra la decisión en local. En esta demo no se envía ningún correo ni se escribe en ningún sistema.</p>`;
- $('#view').innerHTML=h}
-/* ------- Planos ------- */
-function vPlanos(){$('#view').innerHTML=`<div class="heading"><div class="eyebrow">DOCUMENTACIÓN TÉCNICA</div><h1>Planos</h1><div class="sub">Planos, esquemas y manuales en un solo sitio. Cada dato extraído lleva su página de origen, la revisión automática marca lo que llega con problemas y nada se da por bueno sin ti.</div></div><div class="card">${C.planos.map(d=>{const done=D['doc'+d.id];return `<div class="item" style="cursor:pointer" onclick="openPlano(${d.id})"><span class="dot ${d.st==='Con problemas'?'d-red':(d.st==='Validat'||done||d.st==='Validado')?'d-grn':'d-amb'}"></span><div class="b"><b>${esc(d.n)}</b><div class="small mut">${d.t} · ${esc(d.src)}</div></div>${tagOf(d,done)}</div>`}).join('')}</div><p class="small mut" style="margin-top:14px">El plano de la prensa P-12 sigue pedido a oficina técnica sin respuesta: está en Peticiones, con su historial y el recordatorio preparado.</p>`}
-function openPlano(id){const d=C.planos.find(x=>x.id===id);if(!d)return;const done=D['doc'+id];const dev=D['dev'+id];
- if(!d.f.length){openDr(`<button class="x" onclick="closeDr()" aria-label="Cierra">×</button><span class="tag t-amb">${esc(d.st)}</span><h2 style="margin:10px 0 4px">${esc(d.n)}</h2><div class="mut small">${d.t} · ${esc(d.src)}</div><p class="small" style="margin:12px 0">Este plano aún no ha llegado. Se pidió a oficina técnica hace 9 días y el recordatorio no tuvo respuesta.</p><div class="act"><button class="btn" onclick="closeDr();remindInfo('${d.req||'i1'}')">Preparar recordatorio</button></div>`);return}
- const ko=d.checks.filter(c=>!c[1]);
- const prev=d.pv?`<div class="pg">PREVISUALIZACIÓN SIMULADA · ${esc(d.pv.cap)}</div><b>LISTA DE PIEZAS / DATOS</b><table><tr><th>Pos.</th><th>Descripción</th><th>Ref.</th></tr>${d.pv.rows.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td class="${r[3]===3?'miss':''}">${r[3]===3?esc(r[2]):`<mark id="h${r[3]}">${esc(r[2])}</mark>`}</td></tr>`).join('')}</table><p class="mut small" style="margin-top:14px">Documento simulado para la demo. En producción verías el PDF real con los campos resaltados encima.</p>`:'';
- const checks=d.checks.length?`<h3 style="margin:0 0 4px">Revisión automática</h3>${ko.length?`<p class="small mut" style="margin:0 0 8px">${ko.length} problema${ko.length>1?'s':''} detectado${ko.length>1?'s':''} en lo recibido de oficina técnica.</p>`:`<p class="small mut" style="margin:0 0 8px">Sin problemas detectados.</p>`}${d.checks.map(c=>`<div class="chk ${c[1]?'ok':'ko'}"><span class="ic">${c[1]?'✓':'!'}</span><span>${esc(c[0])}${c[1]?'':`<span class="why">${esc(c[2])}</span>`}</span></div>`).join('')}`:'';
- const fields=d.f.map((f,i)=>`<div class="f"><label>${esc(f[0])}</label><div class="v">${f[1].startsWith('No consta')?`<span class="tag t-amb">No consta en el documento</span>`:`<input value="${esc(f[1])}" ${done?'disabled':''}>`}<span class="ref" onclick="hl(${i})">${esc(f[2])}</span></div></div>`).join('');
- const qa=d.qa.length?`<div class="qa"><h3 style="margin:0 0 8px">Preguntar sobre el plano</h3><div class="chips">${d.qa.map((q,qi)=>`<span class="chip" onclick="askQ(${id},${qi})">${esc(q.q)}</span>`).join('')}</div><div id="qa-log"></div><form onsubmit="return askFree(${id},this)"><input name="q" placeholder="Escribe una pregunta sobre el documento…" autocomplete="off"><button class="btn ghost" type="submit">Preguntar</button></form><p class="small mut" style="margin-top:8px">Respuestas simuladas con los datos de ejemplo de este documento. En producción respondería sobre el documento real indicando la página.</p></div>`:'';
- const acts=(done?`<span class="dec">Validado · ${done.ts}</span> <button class="btn ghost" onclick="undoDoc(${id})">Deshacer</button>`
-  :`${ko.length?`<button class="btn ghost" onclick="prepDev(${id})">${dev?'Ver devolución preparada':'Preparar devolución con lo que falta'}</button>`:''}<button class="btn ghost" onclick="closeDr()">Dejar para después</button><button class="btn" onclick="okDoc(${id})">Validar datos</button>`)+((d.bom&&validated(d))?`<button class="btn ghost" onclick="closeDr();go('compra')">Preparar lista de compra</button>`:'');
- openDr(`<button class="x" onclick="closeDr()" aria-label="Cierra">×</button>${tagOf(d,done)}<h2 style="margin:10px 0 4px">${esc(d.n)}</h2><div class="mut small">${d.t} · ${esc(d.src)}</div><p class="small mut" style="margin:10px 0 16px">Revisa cada dato con su origen. Nada se da por bueno sin tu confirmación.</p>${checks?`<div class="card" style="padding:12px 16px;margin-bottom:14px">${checks}</div>`:''}<div class="split"><div class="card doc">${prev}</div><div class="card" style="padding:4px 0">${fields}<div class="act" style="padding:12px 16px">${acts}</div></div></div>${qa?`<div class="card" style="margin-top:14px;padding:14px 16px">${qa}</div>`:''}`)}
-function hl(i){document.querySelectorAll('mark').forEach(x=>x.classList.remove('sel'));const e=document.getElementById('h'+i);if(e){e.classList.add('sel');e.scrollIntoView({block:'center'})}}
-function okDoc(id){D['doc'+id]={ts:new Date().toLocaleString('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})};saveAll();closeDr();toast('Documento validado. Registrado en local.');render()}
-function undoDoc(id){delete D['doc'+id];saveAll();closeDr();toast('Validación deshecha');render()}
-function askQ(id,qi){const d=C.planos.find(x=>x.id===id);if(!d)return;const q=d.qa[qi];if(!q)return;appendQA(q.q,`${esc(q.a)}<span class="refp">Origen: ${esc(q.p)}</span>`)}
-function askFree(id,form){const txt=(form.q.value||'').trim();if(!txt)return false;const d=C.planos.find(x=>x.id===id);form.q.value='';
- if(d){const low=txt.toLowerCase();const hit=d.qa.find(q=>q.kws.some(k=>low.includes(k)));
-  if(hit){appendQA(txt,`${esc(hit.a)}<span class="refp">Origen: ${esc(hit.p)}</span>`);return false}}
- appendQA(txt,`En esta demo solo puedo responder con los datos de ejemplo de este documento. En producción respondería sobre el plano real indicando la página y el cajetín de donde sale cada dato.`);return false}
-function appendQA(q,a){const log=document.getElementById('qa-log');if(!log)return;log.insertAdjacentHTML('beforeend',`<div class="q">${esc(q)}</div><div class="a">${a}</div>`);log.lastElementChild.scrollIntoView({block:'nearest'})}
-function prepDev(id){const d=C.planos.find(x=>x.id===id);if(!d)return;const dev=D['dev'+id];const ko=d.checks.filter(c=>!c[1]);
- openDr(`<button class="x" onclick="closeDr()" aria-label="Cierra">×</button><span class="tag t-amb">Devolución a oficina técnica</span><h2 style="margin:10px 0 4px">${esc(d.n)}</h2><div class="mut small">${esc(d.src)}</div><p class="small" style="margin:12px 0 6px">El plano llega con ${ko.length} problema${ko.length>1?'s':''}. Este borrador devuelve el documento pidiendo justo lo que falta:</p><ul class="tl" style="margin:0 0 12px">${ko.map(c=>`<li>${esc(c[3]||c[0])}</li>`).join('')}</ul><h3 style="margin:16px 0 6px">Borrador preparado (editable)</h3><textarea id="dev-body">Para: Oficina técnica\nAsunto: Plano R-240 · faltan datos para validarlo\n\nHola,\n\nHe revisado el plano de conjunto de la reductora R-240 y no puedo darlo por bueno:\n${ko.map(c=>'- '+(c[3]||c[0])).join('\n')}\n\n¿Me pasáis la versión corregida? Lo necesito para cerrar el pedido de recambios de esta semana.\n\nGracias,\nJavier\nCarbonell (demo)</textarea><div class="act"><button class="btn ghost" onclick="closeDr()">Dejar para después</button><button class="btn" onclick="approveDev(${id})">Aprobar (simulación)</button></div>${dev?`<p class="small dec">Ya aprobada ${dev.ts} · no se ha enviado nada</p>`:`<p class="small mut">Aprobar registra la decisión en local. No se envía ningún correo.</p>`}`)}
-function approveDev(id){D['dev'+id]={action:'aprobada',ts:new Date().toLocaleString('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})};saveAll();closeDr();toast('Devolución aprobada. En producción quedaría lista para enviar; aquí no se envía nada.');render()}
-/* ------- Lista de compra ------- */
-function vCompra(){const docs=C.planos.filter(d=>d.bom);
- let h=`<div class="heading"><div class="eyebrow">DEL PLANO A LA COMPRA</div><h1>Lista de compra</h1><div class="sub">Con el plano validado, su lista de piezas pasa a ser una lista de compra revisable: cada línea lleva su posición en el plano, proveedor, plazo y precio orientativo. Ajustas cantidades, quitas líneas y nada se pide sin tu aprobación.</div></div>`;
- const ready=docs.filter(d=>validated(d));
- if(!ready.length){h+=`<div class="card empty">Todavía no hay ningún plano validado con lista de piezas. Valida uno en Planos y aquí aparecerá su lista de compra.<div class="act" style="justify-content:center;margin-top:12px"><button class="btn ghost" onclick="go('planos')">Ir a Planos</button></div></div>`;$('#view').innerHTML=h;return}
- h+=ready.map(d=>{
-  const dec=D['lc'+d.id];const sel=d.bom.filter(l=>!l.blocked);
-  const total=sel.reduce((s2,l)=>s2+l.p*l.qty,0);
-  const fmt=n=>n.toLocaleString('es-ES',{style:'currency',currency:'EUR'});
-  const rows=d.bom.map((l,i)=>{
-   if(l.blocked)return `<tr><td></td><td><b>${esc(l.desc)}</b><div class="small mut">${esc(l.src)}</div></td><td colspan="3"><span class="tag t-amb">Bloqueada</span> <span class="small mut">${esc(l.blocked)}</span>${d.id===1?` <button class="btn ghost" style="padding:4px 10px;font-size:12px" onclick="prepDev(1)">Ver devolución preparada</button>`:''}</td><td></td></tr>`;
-   return `<tr><td><input type="checkbox" id="lc-c${d.id}-${i}" checked${dec?' disabled':''}></td><td><b>${esc(l.ref)}</b><div class="small mut">${esc(l.desc)} · pos. ${esc(l.pos)}</div></td><td class="small mut">${esc(l.src)}</td><td><input type="number" min="1" value="${l.qty}" id="lc-q${d.id}-${i}" style="width:64px"${dec?' disabled':''}></td><td class="small">${esc(l.sup)} · ${esc(l.lead)}</td><td class="small">${fmt(l.p)} /ud</td></tr>`;
+<title>Automio OS · Carbonell — Del plano a la compra (demo)</title>
+<style>:root{--bg:#eef0f4;--card:#fff;--ink:#1c2b43;--mute:#667085;--line:#e3e7ee;--side:#fff;--red:#d92d20;--redbg:#fee4e2;--amb:#b54708;--ambbg:#fff3df;--grn:#067647;--grnbg:#dcfae6;--acc:#0b5fa5;--accbg:#e8f1fa;--accink:#0a4c83;--navy:#16324f}
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{font:13px/1.45 "Inter","Segoe UI",-apple-system,BlinkMacSystemFont,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+.app{display:grid;grid-template-columns:232px 1fr;min-height:100vh}
+aside{background:var(--side);border-right:1px solid var(--line);position:sticky;top:0;height:100vh;display:flex;flex-direction:column;overflow-y:auto}
+.brand{padding:14px 16px 12px;border-bottom:1px solid var(--line)}
+.brand .logo{display:flex;align-items:center;gap:9px}
+.brand .mark{width:30px;height:30px;border-radius:7px;background:var(--acc);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;letter-spacing:.02em}
+.brand .bn{font-weight:700;font-size:13.5px;color:var(--navy)}
+.brand .bs{font-size:10px;letter-spacing:.14em;color:#8a94a6;font-weight:600;margin-top:2px}
+nav{padding:10px 8px;flex:1}
+nav .sec{font-size:10px;letter-spacing:.12em;color:#98a2b3;font-weight:700;padding:12px 10px 5px;text-transform:uppercase}
+nav a{display:flex;align-items:center;gap:9px;color:#34405a;text-decoration:none;padding:7px 10px;border-radius:7px;cursor:pointer;font-weight:500;font-size:13px;margin-bottom:1px}
+nav a svg{width:16px;height:16px;stroke:#667085;flex:none}
+nav a:hover{background:#f2f4f8}
+nav a.on{background:var(--accbg);color:var(--accink);font-weight:600}
+nav a.on svg{stroke:var(--acc)}
+nav a .n{margin-left:auto;background:var(--acc);color:#fff;border-radius:99px;font-size:10.5px;padding:0 6px;line-height:16px;font-weight:700}
+.side-foot{font-size:11px;color:var(--mute);border-top:1px solid var(--line);padding:10px 14px;line-height:1.55}
+main{min-width:0;display:flex;flex-direction:column}
+.topbar{height:52px;display:flex;align-items:center;gap:12px;background:#fff;border-bottom:1px solid var(--line);padding:0 22px;position:sticky;top:0;z-index:15}
+.topbar .crumb{font-weight:600;color:var(--navy);font-size:13.5px}
+.topbar .gsearch{flex:1;max-width:420px;position:relative}
+.topbar .gsearch input{width:100%;border:1px solid var(--line);background:#f6f7f9;border-radius:8px;padding:7px 12px 7px 32px;font-size:12.5px}
+.topbar .gsearch svg{position:absolute;left:10px;top:8px;width:15px;height:15px;stroke:#98a2b3}
+.topbar .sp{flex:1}
+.pill{font-size:10.5px;font-weight:700;letter-spacing:.05em;background:var(--ambbg);color:var(--amb);border:1px solid #f1d19a;border-radius:99px;padding:4px 11px;white-space:nowrap}
+.avatar{width:30px;height:30px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+.content{padding:20px 22px 60px}
+h1{font-size:19px;margin:0;color:var(--navy);letter-spacing:-.01em}
+.sub{color:var(--mute);margin:3px 0 16px;font-size:12.5px}
+.row-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:4px}
+.row-head .sp{flex:1}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;min-width:0}
+.card h3{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--mute);margin:0 0 12px}
+.grid{display:grid;gap:14px;margin-bottom:14px}
+.k4{grid-template-columns:repeat(4,1fr)}.k3{grid-template-columns:repeat(3,1fr)}.k2{grid-template-columns:1fr 1fr}.two{grid-template-columns:1.6fr 1fr}
+.kpi b{font-size:24px;display:block;line-height:1.1;color:var(--navy);font-weight:750}
+.kpi span{color:var(--mute);font-size:12px}
+.kpi .d{font-size:11px;margin-top:4px}
+.kpi.bad b{color:var(--red)}.kpi.warn b{color:var(--amb)}.kpi.ok b{color:var(--grn)}
+.tag{display:inline-block;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;white-space:nowrap}
+.t-red{background:var(--redbg);color:#b42318}.t-amb{background:var(--ambbg);color:var(--amb)}.t-grn{background:var(--grnbg);color:var(--grn)}.t-blu{background:var(--accbg);color:var(--accink)}.t-gry{background:#eef0f3;color:#475467}.t-pur{background:#f0e9fa;color:#6941c6}
+.mut{color:var(--mute)}.small{font-size:12px}.b{font-weight:600}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+.tools .sp{flex:1}
+.chip{border:1px solid var(--line);background:#fff;border-radius:99px;padding:5px 12px;cursor:pointer;font:inherit;font-size:12px;color:#34405a}
+.chip.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.chip .c{opacity:.65;font-size:11px;margin-left:3px}
+input,select,textarea{font:inherit;font-size:12.5px;border:1px solid var(--line);border-radius:7px;padding:7px 10px;background:#fff;color:var(--ink)}
+input[type=search],input[type=text]{min-width:200px}
+textarea{width:100%;min-height:150px;line-height:1.55}
+button.btn{font:inherit;font-size:12.5px;font-weight:600;border:1px solid var(--acc);background:var(--acc);color:#fff;border-radius:7px;padding:7px 14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+button.btn.ghost{background:#fff;color:var(--navy);border-color:#cbd2e0}
+button.btn.soft{background:var(--accbg);color:var(--accink);border-color:transparent}
+button.btn.danger{background:#fff;color:#b42318;border-color:#f0c4c0}
+button:disabled{opacity:.45;cursor:default}
+.act{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:#fff}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--mute);text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap;background:#f8f9fb;font-weight:700;position:sticky;top:0}
+td{padding:8px 12px;border-bottom:1px solid #eef0f4;vertical-align:middle;white-space:nowrap}
+td.wrap{white-space:normal}
+tr.row{cursor:pointer}tr.row:hover td{background:#f6f8fc}
+tr.sel td{background:var(--accbg)}
+.tfoot{display:flex;align-items:center;gap:10px;padding:8px 12px;font-size:11.5px;color:var(--mute);background:#f8f9fb;border-top:1px solid var(--line)}
+.bar{height:6px;background:#eceef2;border-radius:99px;overflow:hidden;min-width:70px}.bar i{display:block;height:100%;background:var(--navy)}
+.bar.risk i{background:var(--red)}.bar.warn i{background:#e8890c}.bar.ok i{background:var(--grn)}
+.drawer{position:fixed;inset:0;background:rgba(15,23,42,.42);display:none;z-index:30}
+.drawer.on{display:block}
+.panel{position:absolute;right:0;top:0;bottom:0;width:min(680px,100%);background:#fff;padding:0;overflow-y:auto;box-shadow:-8px 0 30px rgba(15,23,42,.18)}
+.panel .ph{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);padding:16px 22px 0;z-index:2}
+.panel .pb{padding:16px 22px 40px}
+.panel h2{font-size:17px;margin:0;color:var(--navy)}
+.x{float:right;border:0;background:#eef0f3;border-radius:7px;width:30px;height:30px;font-size:16px;cursor:pointer;color:#475467}
+.tabs{display:flex;gap:2px;margin-top:12px}
+.tabs button{border:0;background:none;font:inherit;font-size:12.5px;padding:9px 12px;cursor:pointer;color:var(--mute);border-bottom:2px solid transparent;font-weight:500}
+.tabs button.on{color:var(--acc);font-weight:650;border-bottom-color:var(--acc)}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#101828;color:#fff;padding:10px 18px;border-radius:8px;font-size:12.5px;z-index:60;display:none;box-shadow:0 6px 24px rgba(0,0,0,.3)}
+.why{background:var(--accbg);border-radius:8px;padding:10px 12px;margin:10px 0;font-size:12.5px;line-height:1.55;color:var(--accink)}
+.note{background:#f8f9fb;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:12.5px;color:#475467}
+.banner{background:var(--ambbg);border:1px solid #f1d19a;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;display:flex;gap:10px;align-items:flex-start;color:#7a4a00}
+.kv{display:grid;grid-template-columns:150px 1fr;gap:6px 12px;margin:12px 0;font-size:12.5px}
+.kv div:nth-child(odd){color:var(--mute)}
+.tl{margin:8px 0 0;padding:0;list-style:none}
+.tl li{padding:0 0 12px 18px;position:relative;font-size:12.5px;border-left:2px solid var(--line);margin-left:5px}
+.tl li:before{content:"";position:absolute;left:-6px;top:4px;width:10px;height:10px;border-radius:50%;background:#fff;border:2px solid var(--navy)}
+.tl li b{display:block;color:var(--navy)}
+.tl .w{color:var(--mute);font-size:11.5px}
+.docview{background:#f8f9fb;border:1px solid var(--line);border-radius:10px;padding:14px;font-size:12.5px}
+.mailprev{background:#f7f8fa;border:1px solid var(--line);border-radius:8px;padding:12px;font-size:12.5px;margin-top:10px}
+.mailprev .mh{color:var(--mute);font-size:11.5px;margin-bottom:6px}
+.qitem{display:flex;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:#fff;margin-bottom:10px;align-items:flex-start;cursor:pointer}
+.qitem:hover{border-color:#c9d0e0;box-shadow:0 2px 8px rgba(15,23,42,.06)}
+.dot{width:9px;height:9px;border-radius:50%;margin-top:5px;flex:none}
+.d-red{background:var(--red)}.d-amb{background:#e8890c}.d-blu{background:var(--navy)}.d-gry{background:#a7b0bf}.d-grn{background:#1f9d55}
+.qitem .b{flex:1;min-width:0}
+.qitem .t{font-weight:600;color:var(--navy);font-size:13px}
+.qitem .m{color:var(--mute);font-size:12px;margin-top:2px}
+.src{font-size:10.5px;color:#98a2b3}
+.chart{display:flex;align-items:flex-end;gap:8px;height:110px;padding-top:6px}
+.chart .col{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0}
+.chart .col .v{font-size:11px;font-weight:700;color:var(--navy)}
+.chart .col .b{width:100%;max-width:38px;background:var(--accbg2,var(--accbg));border-radius:5px 5px 0 0;background:var(--navy);opacity:.85}
+.chart .col .l{font-size:10.5px;color:var(--mute)}
+.progress-steps{display:flex;gap:0;margin:14px 0}
+.progress-steps .st{flex:1;text-align:center;font-size:11px;color:var(--mute);position:relative;padding-top:16px}
+.progress-steps .st:before{content:"";position:absolute;top:4px;left:50%;transform:translateX(-50%);width:12px;height:12px;border-radius:50%;background:#fff;border:2px solid #d0d5dd}
+.progress-steps .st:after{content:"";position:absolute;top:9px;left:calc(-50% + 8px);right:calc(50% + 8px);height:2px;background:#e4e7ec}
+.progress-steps .st:first-child:after{display:none}
+.progress-steps .st.done{color:var(--grn);font-weight:600}
+.progress-steps .st.done:before{background:var(--grn);border-color:var(--grn)}
+.progress-steps .st.done:after{background:var(--grn)}
+.progress-steps .st.now{color:var(--acc);font-weight:700}
+.progress-steps .st.now:before{border-color:var(--acc);background:var(--acc)}
+.ofboard{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.ofcard{border:1px solid var(--line);border-radius:10px;background:#fff;padding:14px}
+.ofcard h4{margin:0 0 2px;font-size:13.5px;color:var(--navy)}
+.matrow{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px dashed #eef0f4;font-size:12px}
+.matrow:last-child{border:0}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:900px){.app{grid-template-columns:1fr}aside{position:fixed;z-index:50;left:-240px;transition:left .2s}aside.open{left:0}.k4{grid-template-columns:repeat(2,1fr)}.two,.k2,.split{grid-template-columns:1fr}.content{padding:14px}}
+</style></head>
+<body><div class="app" id="app"></div>
+<script>
+//META lang=es|title=Automio OS · Carbonell — Del plano a la compra (demo)|acc=#0b5fa5|accbg=#e8f1fa|accink=#0a4c83|navy=#16324f
+// Demo Carbonell — castellano. Datos ficticios marcados como ejemplo. Modelos reales: LM 8-23, SP, TL/60, ordenador IM8, sistema PBS, inox AISI 304 (carbonellcia.com).
+const CFG = {
+  slug:'carbonell', v:6, company:'Carbonell', mark:'CB', userIni:'AL', locale:'es-ES', home:'panel',
+  t:{
+    pill:'DATOS DE EJEMPLO — DEMO SIN CONEXIÓN REAL',
+    foot:'Demo de Automio para Carbonell.<br>Todos los datos son ficticios y las acciones solo se simulan en este navegador. Nada se envía ni se escribe en ningún sistema.',
+    empty:'Sin registros', records:'registros', mailto:'Para', mailsubj:'Asunto'
+  },
+  modules:[
+    {sec:'General'},
+    {id:'panel', label:'Panel', icon:'panel'},
+    {id:'inbox', label:'Aprobaciones', icon:'inbox', badge:s=>s.approvals.filter(a=>a.estado==='pendiente').length||''},
+    {sec:'Operativa'},
+    {id:'planos', label:'Planos y documentos', icon:'docs'},
+    {id:'recambios', label:'Recambios', icon:'spare', badge:s=>s.parts.filter(p=>p.stock<=p.min).length||''},
+    {id:'compras', label:'Compras', icon:'compras'},
+    {id:'logi', label:'Logística', icon:'logi'},
+    {id:'prov', label:'Proveedores', icon:'prov'},
+    {sec:'Sistema'},
+    {id:'act', label:'Actividad', icon:'act'}
+  ],
+  initial:{
+    approvals:[
+      {id:'AP-301', pri:'alta', tipo:'Solicitud de compra', estado:'pendiente',
+        titulo:'Recambios urgentes LM-18 · lavandería con máquina parada',
+        detalle:'Una lavandería industrial (cliente — ejemplo) tiene la LM-18 parada por el rodamiento principal. Del plano validado salen 3 piezas: 2 en stock, 1 a comprar (rodamiento 6314).',
+        why:'Máquina parada = cliente sin servicio. La pieza crítica no está en stock y el proveedor habitual la tiene en 48 h.',
+        accion:{kind:'pedido', piezas:['Rodamiento 6314 (1 ud) — 84,00 €'], prov:'Rodamientos y Transmisiones S.A. (ejemplo)'}},
+      {id:'AP-302', pri:'media', tipo:'Reclamación', estado:'pendiente',
+        titulo:'Lote de electroválvulas con fugas · PC-4102',
+        detalle:'De las 20 electroválvulas recibidas, 3 han fallado en banco de pruebas. Garantía vigente.',
+        why:'Reclamar ahora fuerza la reposición sin coste antes de montarlas en máquinas de cliente.',
+        accion:{kind:'mail', to:'calidad@proveedor-ejemplo.es', subj:'PC-4102 · Reclamación lote electroválvulas (3/20 defectuosas)', body:'Buenos días,\n\nen el lote recibido del pedido PC-4102 (20 electroválvulas) hemos detectado 3 unidades con fugas en banco de pruebas. Solicitamos reposición en garantía y análisis del lote.\n\nGracias.'}},
+      {id:'AP-303', pri:'baja', tipo:'Aviso a cliente', estado:'pendiente',
+        titulo:'Envío de recambios a hospital (ejemplo) listo para salir',
+        detalle:'El paquete con la resistencia 9 kW y la junta de puerta para una secadora del hospital (cliente — ejemplo) está preparado. Se propone mensajería 24 h.',
+        why:'El cliente pidió aviso con número de seguimiento.',
+        accion:{kind:'mail', to:'mantenimiento@cliente-ejemplo.es', subj:'Envío de recambios — seguimiento', body:'Buenos días,\n\nsu pedido de recambios sale hoy por mensajería 24 h. Les pasaremos el número de seguimiento en cuanto se genere.\n\nUn saludo.'}}
+    ],
+    docs:[
+      {id:'DOC-LM18', titulo:'Plano de conjunto · Lavacentrífuga LM-18', tipo:'Plano explosionado', rev:'Rev. C · validado', piezas:14, nota:'Inox AISI 304, tambor Ø700 mm'},
+      {id:'DOC-IM8', titulo:'Manual del ordenador IM8', tipo:'Manual', rev:'Ed. 2024', piezas:0, nota:'200 programas, pantalla táctil, puerto USB'},
+      {id:'DOC-TL60', titulo:'Esquema eléctrico · Túnel de lavado TL/60', tipo:'Esquema', rev:'Rev. B · validado', piezas:9, nota:'Cuadro general y módulos'},
+      {id:'DOC-SP14', titulo:'Despiece · Lavacentrífuga SP-14', tipo:'Despiece', rev:'Rev. A', piezas:11, nota:'Alta velocidad, flotante'}
+    ],
+    parts:[
+      {id:'PZ-101', desc:'Rodamiento 6314', maquina:'LM-18 / LM-23', stock:0, min:2, precio:84.00, prov:'Rodamientos y Transmisiones S.A. (ejemplo)'},
+      {id:'PZ-102', desc:'Correa de transmisión SPZ-1400', maquina:'LM 8–23', stock:6, min:4, precio:12.40, prov:'Rodamientos y Transmisiones S.A. (ejemplo)'},
+      {id:'PZ-103', desc:'Electroválvula 1/2" 24V', maquina:'LM 8–23 / TL/60', stock:17, min:8, precio:21.90, prov:'Fluidos y Válvulas S.A. (ejemplo)'},
+      {id:'PZ-104', desc:'Resistencia 9 kW (secadora)', maquina:'Secadoras', stock:3, min:3, precio:96.00, prov:'Resistencias Técnicas S.A. (ejemplo)'},
+      {id:'PZ-105', desc:'Junta de puerta LM', maquina:'LM 8–23', stock:9, min:5, precio:18.75, prov:'Gomas y Juntas S.A. (ejemplo)'},
+      {id:'PZ-106', desc:'Panel de control IM8', maquina:'LM 8–23', stock:1, min:1, precio:640.00, prov:'Electrónica propia (montaje)'},
+      {id:'PZ-107', desc:'Bomba de desagüe 40 mm', maquina:'LM 8–23', stock:2, min:2, precio:54.30, prov:'Fluidos y Válvulas S.A. (ejemplo)'},
+      {id:'PZ-108', desc:'Pata de goma regulable', maquina:'LM 8–23 / SP', stock:22, min:8, precio:6.80, prov:'Gomas y Juntas S.A. (ejemplo)'},
+      {id:'PZ-109', desc:'Chapa inox AISI 304 1,5 mm', maquina:'frontales y laterales', stock:14, min:10, precio:88.00, prov:'Aceros Inox del Baix S.A. (ejemplo)'}
+    ],
+    orders:[
+      {id:'PC-4102', prov:'Fluidos y Válvulas S.A. (ejemplo)', estado:'reclamado', total:438.00, entrega:'recibido 10/11', lineas:[
+        {desc:'Electroválvula 1/2" 24V', qty:20, precio:21.90, estado:'recibido'}]},
+      {id:'PC-4105', prov:'Rodamientos y Transmisiones S.A. (ejemplo)', estado:'enviado', total:84.00, entrega:'previsto 20/11', lineas:[
+        {desc:'Rodamiento 6314', qty:1, precio:84.00, estado:'pendiente'}]},
+      {id:'PC-4106', prov:'Aceros Inox del Baix S.A. (ejemplo)', estado:'confirmado', total:2640.00, entrega:'previsto 25/11', lineas:[
+        {desc:'Chapa inox AISI 304 1,5 mm', qty:30, precio:88.00, estado:'confirmado'}]},
+      {id:'PC-4098', prov:'Gomas y Juntas S.A. (ejemplo)', estado:'recibido', total:321.30, entrega:'recibido 04/11', lineas:[
+        {desc:'Junta de puerta LM', qty:10, precio:18.75, estado:'recibido'},
+        {desc:'Pata de goma regulable', qty:20, precio:6.80, estado:'recibido'}]}
+    ],
+    shipments:[
+      {id:'EN-220', cliente:'Lavandería industrial (ejemplo)', contenido:'Rodamiento 6314 + correas', estado:'preparacion', fecha:'sale 19/11', obs:'máquina parada — urgente'},
+      {id:'EN-218', cliente:'Hospital (ejemplo)', contenido:'Resistencia 9 kW + junta de puerta', estado:'listo', fecha:'sale hoy', obs:'avisar con seguimiento'},
+      {id:'EN-215', cliente:'Hotel costa (ejemplo)', contenido:'Electroválvulas (4 uds)', estado:'en-transito', fecha:'salió 17/11', obs:'entrega prevista 20/11'},
+      {id:'EN-209', cliente:'Residencia (ejemplo)', contenido:'Panel IM8 (reparación)', estado:'entregado', fecha:'entregado 12/11', obs:'instalado por SAT'}
+    ],
+    suppliers:[
+      {id:'PR-21', nombre:'Rodamientos y Transmisiones S.A. (ejemplo)', cat:'Rodamientos, correas, transmisión', otif:90, calidad:95, pedidos:18, ultimo:'PC-4105', nota:'Rápidos con urgencias (24-48 h).'},
+      {id:'PR-22', nombre:'Fluidos y Válvulas S.A. (ejemplo)', cat:'Electroválvulas, bombas, fontanería', otif:83, calidad:84, pedidos:11, ultimo:'PC-4102', nota:'Último lote con fallos; en reclamación.'},
+      {id:'PR-23', nombre:'Aceros Inox del Baix S.A. (ejemplo)', cat:'Chapa inox AISI 304', otif:92, calidad:96, pedidos:7, ultimo:'PC-4106', nota:'Fiable.'},
+      {id:'PR-24', nombre:'Gomas y Juntas S.A. (ejemplo)', cat:'Juntas y gomas', otif:95, calidad:94, pedidos:9, ultimo:'PC-4098', nota:'Fiable.'},
+      {id:'PR-25', nombre:'Resistencias Técnicas S.A. (ejemplo)', cat:'Resistencias y calefacción', otif:87, calidad:91, pedidos:5, ultimo:'PC-4095', nota:'Plazos correctos.'}
+    ],
+    activity:[{ts:new Date().toISOString(), text:'Demo iniciada con datos de ejemplo.'}]
+  },
+  views:{}
+};
+
+// ---------- helpers ----------
+const EST_O = {borrador:['t-gry','Borrador'],enviado:['t-blu','Enviado'],confirmado:['t-blu','Confirmado'],reclamado:['t-red','Reclamado'],parcial:['t-amb','Recepción parcial'],recibido:['t-grn','Recibido']};
+const EST_L = {'pendiente':['t-gry','Pendiente'],'confirmado':['t-blu','Confirmado'],'recibido':['t-grn','Recibido']};
+const EST_EN = {preparacion:['t-amb','En preparación'],listo:['t-blu','Listo para salir'],'en-transito':['t-blu','En tránsito'],entregado:['t-grn','Entregado']};
+const tag = (m,k)=> m[k]?`<span class="tag ${m[k][0]}">${m[k][1]}</span>`:'';
+
+// ---------- Panel ----------
+CFG.views.panel = c => {
+  const bajo = S.parts.filter(p=>p.stock<=p.min).length;
+  const pend = S.approvals.filter(a=>a.estado==='pendiente');
+  const envios = S.shipments.filter(s=>s.estado!=='entregado').length;
+  c.innerHTML = `
+  <div class="row-head"><div><h1>Panel de repuestos y compras</h1><div class="sub">Del plano a la pieza, de la pieza a la compra, y de la compra al cliente: recambios sin hojas de cálculo.</div></div><div class="sp"></div><button class="btn ghost" onclick="resetDemo()">Reiniciar demo</button></div>
+  <div class="banner"><b>Demo con datos de ejemplo.</b>&nbsp;Piezas, pedidos y clientes son ficticios. Los modelos (LM 8–23, SP, TL/60), el ordenador IM8, el sistema PBS y el inox AISI 304 son reales de Carbonell. Ninguna acción sale de este navegador.</div>
+  <div class="grid k4">
+    <div class="card kpi ${bajo?'bad':''}"><b>${bajo}</b><span>piezas en stock mínimo o sin stock</span><div class="d mut">de ${S.parts.length} referencias</div></div>
+    <div class="card kpi"><b>${S.orders.filter(o=>!['recibido'].includes(o.estado)).length}</b><span>pedidos abiertos</span><div class="d mut">${fmtE(S.orders.reduce((t,o)=>t+o.total,0))} (ejemplo)</div></div>
+    <div class="card kpi"><b>${envios}</b><span>envíos de recambios en curso</span><div class="d mut">a clientes</div></div>
+    <div class="card kpi ${pend.length?'warn':'ok'}"><b>${pend.length}</b><span>aprobaciones pendientes</span><div class="d mut">nada se ejecuta sin aprobación</div></div>
+  </div>
+  <div class="grid two">
+    <div class="card"><h3>Decisiones pendientes</h3>${pend.length?pend.map(qitemHTML).join(''):'<div class="note">Sin decisiones pendientes.</div>'}</div>
+    <div class="card"><h3>Piezas bajo mínimo</h3>${S.parts.filter(p=>p.stock<=p.min).map(p=>`
+      <div class="matrow"><span class="dot ${p.stock===0?'d-red':'d-amb'}"></span><div style="flex:1"><b>${esc(p.desc)}</b><div class="mut small">${esc(p.maquina)}</div></div><span class="tag ${p.stock===0?'t-red':'t-amb'}">stock ${p.stock} / mín ${p.min}</span></div>`).join('')||'<div class="note">Stock al día.</div>'}
+      <div class="note" style="margin-top:12px">Cuando una pieza baja de mínimo, el sistema propone la compra con proveedor y precio habituales; la aprueba una persona.</div></div>
+  </div>`;
+  c.querySelectorAll('.qitem').forEach((q,i)=>q.addEventListener('click',()=>openApproval(pend[i].id)));
+};
+
+function qitemHTML(a){
+  const dot = a.pri==='alta'?'d-red':a.pri==='media'?'d-amb':'d-gry';
+  return `<div class="qitem" data-id="${a.id}"><span class="dot ${dot}"></span><div class="b"><div class="t">${esc(a.titulo)}</div><div class="m">${esc(a.detalle)}</div></div><span class="tag t-gry">${esc(a.tipo)}</span></div>`;
+}
+
+// ---------- Inbox ----------
+CFG.views.inbox = c => {
+  const pend = S.approvals.filter(a=>a.estado==='pendiente');
+  const done = S.approvals.filter(a=>a.estado!=='pendiente');
+  c.innerHTML = `<div class="row-head"><div><h1>Aprobaciones</h1><div class="sub">El sistema prepara y propone; la persona aprueba, edita o rechaza.</div></div></div>
+  <h2 style="margin:6px 0 12px">Pendientes (${pend.length})</h2>
+  ${pend.length?pend.map(qitemHTML).join(''):'<div class="note">Sin decisiones pendientes.</div>'}
+  ${done.length?`<h2 style="margin:22px 0 12px">Resueltas (${done.length})</h2>`+done.map(a=>`<div class="qitem" data-id="${a.id}"><span class="dot d-grn"></span><div class="b"><div class="t">${esc(a.titulo)}</div><div class="m">${esc(a.estado)} · ${esc(a.resolucion||'')}</div></div></div>`).join(''):''}`;
+  c.querySelectorAll('.qitem').forEach(q=>q.addEventListener('click',()=>openApproval(q.dataset.id)));
+};
+
+function openApproval(id){
+  const a = S.approvals.find(x=>x.id===id); if(!a) return;
+  const body = a.estado==='pendiente' ? `
+    <div class="why"><b>Por qué importa:</b> ${esc(a.why)}</div>
+    ${a.accion.kind==='mail'?`<h3>Correo propuesto (editable)</h3><textarea id="ap-mail">${a.accion.body}</textarea>`:''}
+    ${a.accion.kind==='pedido'?`<div class="note">Acción propuesta: emitir pedido a <b>${esc(a.accion.prov)}</b> con:<br>· ${a.accion.piezas.join('<br>· ')}</div>`:''}
+    <div class="act">
+      ${a.accion.kind==='mail'?`<button class="btn" onclick="resolveApproval('${id}','mail')">Aprobar y enviar (simulado)</button>`:''}
+      ${a.accion.kind==='pedido'?`<button class="btn" onclick="resolveApproval('${id}','pedido')">Aprobar y emitir pedido (simulado)</button>`:''}
+      <button class="btn ghost" onclick="toast('Borrador guardado (simulado)')">Guardar borrador</button>
+      <button class="btn danger" onclick="resolveApproval('${id}','rechazada')">Rechazar</button>
+    </div>`
+  : `<div class="note">Resuelta: ${esc(a.estado)} · ${esc(a.resolucion||'')}</div>`;
+  openDrawer(`<div class="ph"><button class="x" onclick="closeDrawer()">×</button><h2>${esc(a.titulo)}</h2><div class="sub">${a.id} · ${esc(a.tipo)} · prioridad ${esc(a.pri)}</div></div><div class="pb"><p>${esc(a.detalle)}</p>${body}</div>`);
+}
+function resolveApproval(id, how){
+  const a = S.approvals.find(x=>x.id===id); if(!a) return;
+  if(how==='mail'){ a.estado='aprobada'; a.resolucion='correo registrado como enviado (simulado)'; logAct(`Aprobado: ${a.titulo}`); }
+  else if(how==='pedido'){
+    a.estado='aprobada'; a.resolucion='pedido emitido (simulado)';
+    const n='PC-'+(4107+S.orders.filter(o=>o.id.startsWith('PC-41')).length);
+    S.orders.unshift({id:n, prov:a.accion.prov, estado:'enviado', total:84.00, entrega:'previsto 48 h', lineas:[{desc:'Rodamiento 6314', qty:1, precio:84.00, estado:'pendiente'}]});
+    const en=S.shipments.find(s=>s.id==='EN-220'); if(en){en.estado='en-transito'; en.fecha='salió hoy';}
+    logAct(`Pedido ${n} emitido tras aprobación (simulado).`);
+  }
+  else { a.estado='rechazada'; a.resolucion='rechazada por el usuario'; logAct(`Rechazada: ${a.titulo}`); }
+  save(); closeDrawer(); renderView(); toast(how==='rechazada'?'Decisión rechazada':'Aprobado y registrado (simulado)');
+}
+
+// ---------- Planos ----------
+CFG.views.planos = c => {
+  c.innerHTML = `<div class="row-head"><div><h1>Planos y documentos técnicos</h1><div class="sub">Del plano validado a la lista de piezas a comprar: sin buscar referencias a mano ni pedir el dibujo por correo.</div></div></div>
+  <div class="grid k2">${S.docs.map(d=>`
+    <div class="card" style="cursor:pointer" data-id="${d.id}">
+      <div class="row-head"><h2 style="margin:0">${esc(d.titulo)}</h2><div class="sp"></div><span class="tag t-blu">${esc(d.tipo)}</span></div>
+      <div class="mut small" style="margin:6px 0">${esc(d.nota)}</div>
+      ${kv([['Revisión',`<b>${esc(d.rev)}</b>`],['Piezas listadas', d.piezas?d.piezas+' referencias':'—']])}
+    </div>`).join('')}</div>`;
+  c.querySelectorAll('.card[data-id]').forEach(k=>k.addEventListener('click',()=>openDoc(k.dataset.id)));
+};
+function openDoc(id){
+  const d = S.docs.find(x=>x.id===id);
+  const related = S.parts.filter(p=>(id==='DOC-LM18'&&['PZ-101','PZ-102','PZ-103','PZ-105','PZ-106','PZ-107','PZ-108'].includes(p.id))||(id==='DOC-TL60'&&['PZ-103','PZ-104'].includes(p.id))||(id==='DOC-SP14'&&['PZ-102','PZ-108'].includes(p.id)));
+  drawerState = {tab:'piezas', render:()=>renderDocDrawer(id)};
+  renderDocDrawer(id);
+}
+function renderDocDrawer(id){
+  const d = S.docs.find(x=>x.id===id);
+  const related = S.parts.filter(p=>(id==='DOC-LM18'&&['PZ-101','PZ-102','PZ-103','PZ-105','PZ-106','PZ-107','PZ-108'].includes(p.id))||(id==='DOC-TL60'&&['PZ-103','PZ-104'].includes(p.id))||(id==='DOC-SP14'&&['PZ-102','PZ-108'].includes(p.id)));
+  const tabs = [{id:'piezas',l:'Piezas'},{id:'doc',l:'Documento'}];
+  let body='';
+  if(drawerState.tab==='piezas'){
+    if(!related.length){ body='<div class="note">Documento sin despiece asociado (manual de uso).</div>'; }
+    else body = tableHTML([
+      {k:'s',l:'',f:p=>p.stock<=p.min?`<input type="checkbox" data-p="${p.id}" ${p.stock===0?'checked':''}>`:''},
+      {k:'d',l:'Pieza',f:p=>`<b>${esc(p.desc)}</b><div class="mut small">${esc(p.maquina)}</div>`,wrap:true},
+      {k:'st',l:'Stock',f:p=>`<span class="tag ${p.stock===0?'t-red':p.stock<=p.min?'t-amb':'t-grn'}">${p.stock}</span>`,num:true},
+      {k:'p',l:'Precio',f:p=>fmtE(p.precio),num:true}
+    ], related, {foot:'Marcadas: las que faltan o están en mínimo'});
+    body += `<div class="act"><button class="btn" onclick="solicitarPiezas('${id}')">Crear solicitud de compra con las marcadas</button></div>`;
+  } else {
+    body = `<div class="docview">📄 ${esc(d.titulo)} (${esc(d.rev)})<br><br><span class="mut">En la demo no se muestra el plano real; en producción se abre el PDF con la vista explosionada y cada posición enlaza con su pieza.</span></div>`;
+  }
+  document.querySelector('#drawer .panel').innerHTML = `<div class="ph"><button class="x" onclick="closeDrawer()">×</button><h2>${esc(d.titulo)}</h2><div class="sub">${esc(d.tipo)} · ${esc(d.rev)}</div>${drawerTabs(tabs, drawerState.tab)}</div><div class="pb">${body}</div>`;
+}
+function solicitarPiezas(id){
+  const sel=[...document.querySelectorAll('input[data-p]:checked')].map(i=>i.dataset.p);
+  if(!sel.length){ toast('Marca al menos una pieza'); return; }
+  const piezas = sel.map(pid=>S.parts.find(p=>p.id===pid));
+  const n='SC-'+(300+S.approvals.length+1);
+  S.approvals.unshift({id:n, pri:'media', tipo:'Solicitud de compra', estado:'pendiente',
+    titulo:`Solicitud de compra desde plano (${sel.length} piezas)`,
+    detalle:'Generada desde '+id+': '+piezas.map(p=>p.desc).join(', ')+'.',
+    why:'Piezas sin stock o bajo mínimo detectadas desde el plano validado.',
+    accion:{kind:'pedido', piezas:piezas.map(p=>`${p.desc} (1 ud) — ${fmtE(p.precio)}`), prov:piezas[0].prov}});
+  logAct(`Solicitud de compra ${n} creada desde ${id} (${sel.length} piezas).`);
+  save(); closeDrawer(); toast('Solicitud creada en Aprobaciones'); go('inbox');
+}
+
+// ---------- Recambios ----------
+let FLT_P = {estado:'todas', q:''};
+CFG.views.recambios = c => {
+  let rows = S.parts.filter(p=>(FLT_P.estado==='todas'||(FLT_P.estado==='bajo'&&p.stock<=p.min)) && (!FLT_P.q || (p.desc+p.maquina).toLowerCase().includes(FLT_P.q)));
+  c.innerHTML = `<div class="row-head"><div><h1>Stock de recambios</h1><div class="sub">Referencias de las máquinas más habituales, con mínimos y proveedor habitual.</div></div></div>
+  ${chipRow([{key:'todas',label:'Todas',count:S.parts.length},{key:'bajo',label:'Bajo mínimo',count:S.parts.filter(p=>p.stock<=p.min).length}], FLT_P.estado, 'setFltPEstado')}
+  <div class="tools"><input type="search" placeholder="Buscar pieza o máquina…" value="${esc(FLT_P.q)}" oninput="setFltPQ(this.value)"></div>
+  ${tableHTML([
+    {k:'d',l:'Pieza',f:p=>`<b>${esc(p.desc)}</b><div class="mut small">${esc(p.maquina)}</div>`,wrap:true},
+    {k:'st',l:'Stock',f:p=>`<span class="tag ${p.stock===0?'t-red':p.stock<=p.min?'t-amb':'t-grn'}">${p.stock}</span>`,num:true},
+    {k:'mn',l:'Mín.',f:p=>p.min,num:true},
+    {k:'p',l:'Precio',f:p=>fmtE(p.precio),num:true},
+    {k:'pr',l:'Proveedor habitual',f:p=>`<span class="mut small">${esc(p.prov)}</span>`,wrap:true},
+    {k:'a',l:'',f:p=>p.stock<=p.min?`<button class="btn soft" onclick="event.stopPropagation();reponer('${p.id}')">Proponer reposición</button>`:''}
+  ], rows)}`;
+};
+function setFltPEstado(k){FLT_P.estado=k;renderView();}
+function setFltPQ(v){FLT_P.q=v.toLowerCase();renderView();const i=document.querySelector('input[type=search]');if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length);}}
+function reponer(pid){
+  const p=S.parts.find(x=>x.id===pid);
+  const n='SC-'+(300+S.approvals.length+1);
+  S.approvals.unshift({id:n, pri:p.stock===0?'alta':'media', tipo:'Solicitud de compra', estado:'pendiente',
+    titulo:`Reposición de ${p.desc}`,
+    detalle:`Stock actual ${p.stock} (mínimo ${p.min}). Proveedor habitual: ${p.prov}, ${fmtE(p.precio)}/ud.`,
+    why:'Mantener el stock de servicio evita máquinas de cliente paradas.',
+    accion:{kind:'pedido', piezas:[`${p.desc} (${p.min*2} uds) — ${fmtE(p.precio*p.min*2)}`], prov:p.prov}});
+  logAct(`Reposición propuesta para ${p.desc}.`); save(); toast('Propuesta en Aprobaciones'); go('inbox');
+}
+
+// ---------- Compras ----------
+CFG.views.compras = c => {
+  c.innerHTML = `<div class="row-head"><div><h1>Pedidos de compra</h1><div class="sub">Componentes para fabricación y recambios de servicio.</div></div><div class="sp"></div><button class="btn ghost" onclick="nuevoPedido()">+ Nuevo pedido (borrador)</button></div>
+  ${tableHTML([
+    {k:'id',l:'Pedido',f:o=>`<b>${o.id}</b>`},
+    {k:'prov',l:'Proveedor',f:o=>esc(o.prov),wrap:true},
+    {k:'lin',l:'Líneas',f:o=>o.lineas.length,num:true},
+    {k:'total',l:'Total',f:o=>fmtE(o.total),num:true},
+    {k:'ent',l:'Entrega',f:o=>esc(o.entrega),wrap:true},
+    {k:'est',l:'Estado',f:o=>tag(EST_O,o.estado)}
+  ], S.orders)}`;
+  attachRowClicks(c, S.orders, openOrder);
+};
+function openOrder(o){ drawerState = {tab:'lin', render:()=>renderOrderDrawer(o.id)}; renderOrderDrawer(o.id); }
+function renderOrderDrawer(oid){
+  const o = S.orders.find(x=>x.id===oid);
+  const tabs = [{id:'lin',l:'Líneas'},{id:'seg',l:'Seguimiento'}];
+  let body='';
+  if(drawerState.tab==='lin'){
+    body = tableHTML([
+      {k:'d',l:'Descripción',f:l=>esc(l.desc),wrap:true},
+      {k:'q',l:'Ud.',f:l=>l.qty,num:true},
+      {k:'p',l:'Precio ud.',f:l=>fmtE(l.precio),num:true},
+      {k:'e',l:'Estado',f:l=>tag(EST_L,l.estado)}
+    ], o.lineas, {foot:`Total: ${fmtE(o.total)}`});
+  } else {
+    body = `<ul class="tl">
+      <li><b>Pedido emitido</b><span class="w">compras</span></li>
+      ${o.estado!=='borrador'?'<li><b>Enviado al proveedor</b></li>':''}
+      ${['confirmado','recibido'].includes(o.estado)?'<li><b>Confirmado por el proveedor</b></li>':''}
+      ${o.estado==='recibido'?'<li><b>Recepción registrada y verificada</b></li>':''}
+      ${o.estado==='reclamado'?'<li><b>Reclamación abierta</b><span class="w">3/20 unidades defectuosas en banco</span></li>':''}
+    </ul><div class="note">Historial de ejemplo.</div>`;
+  }
+  const acciones = [];
+  if(!['recibido'].includes(o.estado)){
+    acciones.push(`<button class="btn" onclick="mailSeguimiento('${o.id}')">Preparar seguimiento</button>`);
+    if(o.lineas.some(l=>l.estado!=='recibido')) acciones.push(`<button class="btn soft" onclick="recepcionParcial('${o.id}')">Registrar recepción</button>`);
+  }
+  document.querySelector('#drawer .panel').innerHTML = `<div class="ph"><button class="x" onclick="closeDrawer()">×</button><h2>${o.id} · ${esc(o.prov)}</h2><div class="sub">Entrega: ${esc(o.entrega)} · ${tag(EST_O,o.estado)}</div>${drawerTabs(tabs, drawerState.tab)}</div><div class="pb">${body}<div class="act">${acciones.join('')}</div></div>`;
+}
+function mailSeguimiento(oid){
+  const o = S.orders.find(x=>x.id===oid);
+  openDrawer(`<div class="ph"><button class="x" onclick="closeDrawer()">×</button><h2>Seguimiento de ${o.id}</h2><div class="sub">El correo lo revisas antes de que salga (simulado)</div></div>
+  <div class="pb"><textarea id="sg-mail">Buenos días,\n\nescribimos sobre el pedido ${o.id} (${o.lineas.map(l=>l.desc).join('; ')}). Estado actual: ${EST_O[o.estado][1].toLowerCase()}. Necesitamos confirmación de fecha o incidencias.\n\nGracias, un saludo.</textarea>
+  <div class="act"><button class="btn" onclick="enviarSeguimiento('${o.id}')">Aprobar y enviar (simulado)</button><button class="btn ghost" onclick="openOrder(S.orders.find(x=>x.id==='${o.id}'))">Volver</button></div></div>`);
+}
+function enviarSeguimiento(oid){ logAct(`Seguimiento de ${oid} aprobado y registrado como enviado (simulado).`); save(); closeDrawer(); renderView(); toast('Correo registrado como enviado (simulado)'); }
+function recepcionParcial(oid){
+  const o = S.orders.find(x=>x.id===oid);
+  const pend = o.lineas.filter(l=>l.estado!=='recibido');
+  if(!pend.length) return;
+  const l = pend[0]; l.estado='recibido';
+  o.estado = o.lineas.every(x=>x.estado==='recibido') ? 'recibido' : 'parcial';
+  const pz = S.parts.find(p=>p.desc===l.desc); if(pz){ pz.stock += l.qty; }
+  logAct(`Recepción registrada en ${oid}: ${l.desc} (simulado).`);
+  save(); renderOrderDrawer(oid); renderShell(); toast('Recepción registrada y stock actualizado (simulado)');
+}
+function nuevoPedido(){
+  const n = 'PC-' + (4107 + S.orders.filter(o=>o.id.startsWith('PC-41')).length);
+  S.orders.unshift({id:n, prov:'(sin asignar)', estado:'borrador', total:0, entrega:'—', lineas:[{desc:'Línea nueva (editar)', qty:1, precio:0, estado:'pendiente'}]});
+  logAct(`Borrador ${n} creado (simulado).`); save(); renderView(); toast('Borrador creado'); openOrder(S.orders[0]);
+}
+
+// ---------- Logística ----------
+CFG.views.logi = c => {
+  c.innerHTML = `<div class="row-head"><div><h1>Logística de recambios</h1><div class="sub">Envíos a clientes con estado y aviso automático propuesto.</div></div></div>
+  ${tableHTML([
+    {k:'id',l:'Envío',f:s=>`<b>${s.id}</b>`},
+    {k:'cl',l:'Cliente',f:s=>esc(s.cliente),wrap:true},
+    {k:'co',l:'Contenido',f:s=>esc(s.contenido),wrap:true},
+    {k:'fe',l:'Fecha',f:s=>esc(s.fecha),wrap:true},
+    {k:'ob',l:'Nota',f:s=>`<span class="mut small">${esc(s.obs)}</span>`,wrap:true},
+    {k:'e',l:'Estado',f:s=>tag(EST_EN,s.estado)}
+  ], S.shipments)}
+  <div class="note" style="margin-top:12px">Cuando un envío sale, el sistema propone el aviso al cliente con el seguimiento (ver Aprobaciones). En producción se conecta con la agencia.</div>`;
+};
+
+// ---------- Proveedores ----------
+CFG.views.prov = c => {
+  c.innerHTML = `<div class="row-head"><div><h1>Proveedores</h1><div class="sub">Fiabilidad y comportamiento histórico (datos de ejemplo).</div></div></div>
+  ${tableHTML([
+    {k:'n',l:'Proveedor',f:p=>`<b>${esc(p.nombre)}</b><div class="mut small">${esc(p.cat)}</div>`,wrap:true},
+    {k:'o',l:'Entregas a tiempo',f:p=>`<div style="display:flex;align-items:center;gap:8px"><div class="bar ${p.otif<80?'risk':p.otif<90?'warn':'ok'}" style="width:90px"><i style="width:${p.otif}%"></i></div>${p.otif}%</div>`},
+    {k:'q',l:'Calidad',f:p=>`<div style="display:flex;align-items:center;gap:8px"><div class="bar ok" style="width:90px"><i style="width:${p.calidad}%"></i></div>${p.calidad}%</div>`},
+    {k:'pd',l:'Pedidos',f:p=>p.pedidos,num:true},
+    {k:'u',l:'Último',f:p=>p.ultimo},
+    {k:'nt',l:'Nota',f:p=>`<span class="mut small">${esc(p.nota)}</span>`,wrap:true}
+  ], S.suppliers)}
+  <div class="note" style="margin-top:12px">Nombres de proveedores ficticios marcados como ejemplo.</div>`;
+};
+
+// ---------- Actividad ----------
+CFG.views.act = c => {
+  c.innerHTML = `<div class="row-head"><div><h1>Actividad</h1><div class="sub">Todo lo hecho en esta demo, con hora.</div></div><div class="sp"></div><button class="btn ghost" onclick="resetDemo()">Reiniciar demo</button></div>
+  <ul class="tl">${S.activity.map(a=>`<li><b>${esc(a.text)}</b><span class="w">${new Date(a.ts).toLocaleString('es-ES')}</span></li>`).join('')}</ul>`;
+};
+
+// Automio OS · demo framework (datos de ejemplo, todo simulado en local)
+const LSKEY = 'automio-demo-' + CFG.slug;
+let S = loadState();
+function loadState(){
+  try{ const raw = localStorage.getItem(LSKEY); if(raw){ const p = JSON.parse(raw); if(p && p.v === CFG.v) return p.s; } }catch(e){}
+  return JSON.parse(JSON.stringify(CFG.initial));
+}
+function save(){ try{ localStorage.setItem(LSKEY, JSON.stringify({v:CFG.v, s:S})); }catch(e){} }
+function resetDemo(){ localStorage.removeItem(LSKEY); location.reload(); }
+
+const esc = s => String(s==null?'':s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmtN = (n,d=0) => Number(n).toLocaleString(CFG.locale,{minimumFractionDigits:d,maximumFractionDigits:d});
+const fmtE = n => fmtN(n,2) + ' €';
+const $ = sel => document.querySelector(sel);
+const el = html => { const t=document.createElement('template'); t.innerHTML=html.trim(); return t.content.firstElementChild; };
+
+let VIEW = location.hash ? location.hash.slice(1) : CFG.home;
+let drawerState = null;
+
+const ICONS = {
+  panel:'M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z',
+  inbox:'M3 5h18v14H3zM3 7l9 6 9-6',
+  compras:'M4 4h2l2.5 11h10L21 7H7M9 20a1 1 0 100-2 1 1 0 000 2M18 20a1 1 0 100-2 1 1 0 000 2',
+  prov:'M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6',
+  docs:'M7 3h7l5 5v13H7zM14 3v5h5',
+  prod:'M4 20V10l5 3v-3l5 3V6h6v14z',
+  cert:'M12 3l2.5 5 5.5.8-4 4 1 5.7-5-2.7-5 2.7 1-5.7-4-4L9.5 8z',
+  act:'M12 8v5l3 2M12 21a9 9 0 110-18 9 9 0 010 18',
+  conf:'M12 8a4 4 0 100 8 4 4 0 000-8zM12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1',
+  proj:'M3 7h18M3 7v13h18V7M3 7l2-4h14l2 4M10 11h4',
+  logi:'M1 8h13v9H1zM14 11h4l3 3v3h-7zM5.5 20a1.5 1.5 0 100-3 1.5 1.5 0 000 3M16.5 20a1.5 1.5 0 100-3 1.5 1.5 0 000 3',
+  spare:'M14 7a4 4 0 105.6 5.6L14 7zm0 0L8 13m-3 8l6-6',
+  search:'M11 19a8 8 0 100-16 8 8 0 000 16zM21 21l-4.35-4.35'
+};
+function icon(name){ return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="${ICONS[name]||ICONS.panel}"/></svg>`; }
+
+function renderShell(){
+  const mods = CFG.modules.map(m => {
+    if(m.sec) return `<div class="sec">${esc(m.sec)}</div>`;
+    const badge = m.badge ? `<span class="n">${typeof m.badge==='function'?m.badge(S):m.badge}</span>` : '';
+    return `<a data-v="${m.id}" class="${VIEW===m.id?'on':''}" onclick="go('${m.id}')">${icon(m.icon)}<span>${esc(m.label)}</span>${badge}</a>`;
   }).join('');
-  if(dec)return `<div class="card" style="margin-bottom:14px"><div class="headrow"><div><h3>${esc(d.n)}</h3><div class="small mut">${d.bom.length} línea${d.bom.length>1?'s':''} · ${sel.length} a proveedor</div></div><span class="tag ${dec.action==='aprobada'?'t-grn':'t-gry'}">${dec.action==='aprobada'?'Aprobada':'Descartada'} · ${dec.ts}</span></div>${dec.action==='aprobada'?`<p class="small" style="margin:10px 0 0">Borradores por proveedor preparados en Peticiones. No se ha enviado nada.</p><div class="act"><button class="btn ghost" onclick="go('peticiones',{tab:'sup'})">Ver borradores</button> <button class="btn ghost" onclick="undoLista(${d.id})">Deshacer</button></div>`:`<div class="act"><button class="btn ghost" onclick="undoLista(${d.id})">Recuperar lista</button></div>`}</div>`;
-  return `<div class="card" style="margin-bottom:14px;padding:0"><div class="headrow" style="padding:16px 18px 0"><div><h3>${esc(d.n)}</h3><div class="small mut">Generada del plano validado · ${sel.length} línea${sel.length>1?'s':''} a proveedor · total orientativo ${fmt(total)} (precios de ejemplo)</div></div><span class="tag t-blu">Pendiente de revisión</span></div><div class="tw"><table style="min-width:640px;margin-top:10px"><thead><tr><th></th><th>Pieza</th><th>Origen</th><th>Cant.</th><th>Proveedor</th><th>Precio</th></tr></thead><tbody>${rows}</tbody></table></div><div class="act" style="padding:0 18px 16px"><button class="btn ghost" onclick="decLista(${d.id})">Descartar</button><button class="btn" onclick="genLista(${d.id})">Aprobar y preparar borradores</button></div></div>`;
- }).join('');
- h+=`<p class="small mut" style="margin-top:14px">Proveedores, plazos y precios son de ejemplo. Aprobar crea borradores en Peticiones; no se envía ningún pedido.</p>`;
- $('#view').innerHTML=h}
-function genLista(id){const d=C.planos.find(x=>x.id===id);if(!d)return;
- const lines=d.bom.map((l,i)=>({...l,i})).filter(l=>!l.blocked).map(l=>{const c=document.getElementById(`lc-c${id}-${l.i}`);const q=document.getElementById(`lc-q${id}-${l.i}`);return {...l,on:!c||c.checked,qty:q?(Math.max(1,parseInt(q.value)||l.qty)):l.qty}}).filter(l=>l.on);
- if(!lines.length){toast('Selecciona al menos una línea');return}
- const bySup={};lines.forEach(l=>{(bySup[l.sup]=bySup[l.sup]||[]).push(l)});
- let short=d.n.replace(/^Plano de conjunto |^Ficha técnica |^Esquema eléctrico |^Manual de mantenimiento /,'');short=short.charAt(0).toUpperCase()+short.slice(1);
- Object.keys(bySup).forEach((sup,k)=>{const ref=`LC${id}-${k}`;if(drafts.some(x=>x.ref===ref))return;
-  drafts.push({kind:'sup',ref,title:`Pedido ${short} → ${sup}`,body:`Para: ${sup}\nAsunto: Pedido de piezas · ${d.n}\n\nBuenos días,\n\nCon el plano ya validado, necesitaríamos:\n${bySup[sup].map(l=>`- ${l.qty} × ${l.ref} (${l.desc}) · ${l.src}`).join('\n')}\n\nPlazo habitual: ${bySup[sup][0].lead}.\nPrecios orientativos según última compra.\n\nGracias,\nJavier\nCarbonell (demo)`})});
- D['lc'+id]={action:'aprobada',ts:new Date().toLocaleString('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})};saveAll();go('peticiones',{tab:'sup'});toast('Lista aprobada. Borradores preparados en Peticiones; no se ha enviado nada.')}
-function decLista(id){D['lc'+id]={action:'descartada',ts:new Date().toLocaleString('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})};saveAll();toast('Lista descartada');render()}
-function undoLista(id){delete D['lc'+id];saveAll();toast('Lista recuperada');render()}
-/* ------- Recambios ------- */
-function vRecambios(){$('#view').innerHTML=`<div class="heading"><div class="eyebrow">ALMACÉN</div><h1>Recambios</h1><div class="sub">Piezas encontradas en los documentos validados, con stock y proveedor habitual. Preparar una petición no la envía: pasa por tu aprobación.</div></div><div class="card tw"><table><thead><tr><th>Referencia</th><th>Origen</th><th>Proveedor</th><th>Stock</th><th>Estado</th><th></th></tr></thead><tbody>${C.parts.map(p=>{const low=p.stock<p.min;return `<tr><td><b>${esc(p.r)}</b><div class="small mut">${esc(p.d)}</div></td><td class="small mut">${esc(p.from)}</td><td class="small">${esc(p.sup)} · ${esc(p.lead)}</td><td>${p.stock} / ${p.min}</td><td><span class="tag ${low?'t-red':'t-grn'}">${low?'Bajo mínimo':'Correcto'}</span></td><td>${low?`<button class="btn ghost" onclick="ask('${esc(p.r)}')">Preparar petición</button>`:''}</td></tr>`}).join('')}</tbody></table></div>`}
-function ask(ref){const p=C.parts.find(x=>x.r===ref);if(!p)return;const q=p.min*2-p.stock;
- if(!drafts.some(d=>d.ref===ref&&!D['draft-'+ref])){drafts.push({kind:'sup',ref,body:`Para: ${p.sup}\nAsunto: Petición de recambios ${p.r}\n\nBuenos días,\n\nNecesitaríamos ${q} unidades de ${p.r} (${p.d}).\nOrigen de la referencia: ${p.from}.\nPlazo habitual: ${p.lead}.\n\nGracias.`});saveAll()}
- go('peticiones',{tab:'sup'});toast('Borrador preparado en Peticiones')}
-/* ------- Peticiones ------- */
-function vPeticiones(){const t=state.tab;let h=`<div class="heading"><div class="eyebrow">SALIENTES</div><h1>Peticiones</h1><div class="sub">Borradores preparados para revisar. Aprobar registra la decisión; en esta demo no se envía nada.</div></div><div class="tabs">${[['sup','A proveedor'],['info','De información y planos']].map(([k,tt])=>`<button class="${t===k?'on':''}" onclick="state.tab='${k}';render()">${tt}</button>`).join('')}</div><div id="mb"></div>`;
- $('#view').innerHTML=h;const mb=$('#mb');
- if(t==='sup'){const open=drafts.filter(d=>!D['draft-'+d.ref]);const done=drafts.filter(d=>D['draft-'+d.ref]);
-  let x=open.length?open.map(d=>`<div class="card" style="margin-bottom:12px"><div class="headrow"><h3>${esc(d.title||('Petición de recambios '+d.ref))}</h3><span class="tag t-amb">Borrador</span></div><div class="mailprev"><div class="draft" id="db-${esc(d.ref)}" contenteditable="true">${esc(d.body)}</div></div><div class="act"><button class="btn ghost" onclick="discardDraft('${esc(d.ref)}')">Descartar</button><button class="btn" onclick="approveDraft('${esc(d.ref)}')">Aprobar (simulación)</button></div></div>`).join(''):`<div class="card empty">Ninguna petición pendiente. Elige una pieza bajo mínimo en Recambios.</div>`;
-  if(done.length)x+=`<div class="card"><h2>Registro</h2>${done.map(d=>{const dd=D['draft-'+d.ref];return `<div class="item"><span class="dot ${dd.action==='aprobada'?'d-grn':'d-red'}"></span><div class="b"><b>Petición ${esc(d.ref)}</b><div class="small"><span class="dec ${dd.action==='aprobada'?'':'rej'}">${dd.action==='aprobada'?'Aprobada (no enviada)':'Descartada'}</span> · ${dd.ts}</div></div></div>`}).join('')}</div>`;
-  mb.innerHTML=x;return}
- let x=C.info.map(i=>{const dd=D[i.id];return `<div class="card" style="margin-bottom:12px"><div class="headrow"><div><h3>${esc(i.what)}</h3><div class="small mut">${esc(i.to)} · pedido ${esc(i.asked)}</div></div>${dd?`<span class="tag t-grn">Recordatorio aprobado</span>`:`<button class="btn ghost" onclick="remindInfo('${i.id}')">Preparar recordatorio</button>`}</div><ul class="tl" style="margin-top:12px">${i.hist.map(h=>`<li><b>${esc(h[0])}</b> · ${esc(h[1])}</li>`).join('')}</ul>${dd?`<div class="small dec" style="margin-top:8px">Aprobado ${dd.ts} · no se ha enviado nada</div>`:''}</div>`}).join('');
- mb.innerHTML=x||`<div class="card empty">Ninguna petición de información abierta.</div>`}
-function discardDraft(ref){const el=document.getElementById('db-'+CSS.escape(ref));if(el){const d=drafts.find(x=>x.ref===ref);if(d)d.body=el.innerText}
- D['draft-'+ref]={action:'descartada',ts:new Date().toLocaleString('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})};saveAll();toast('Borrador descartado');render()}
-function approveDraft(ref){const el=document.getElementById('db-'+CSS.escape(ref));if(el){const d=drafts.find(x=>x.ref===ref);if(d)d.body=el.innerText}
- D['draft-'+ref]={action:'aprobada',ts:new Date().toLocaleString('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})};saveAll();toast("Aprobada. En producción quedaría lista para enviar; aquí no se envía nada.");render()}
-function remindInfo(id){const i=C.info.find(x=>x.id===id);if(!i)return;
- openDr(`<button class="x" onclick="closeDr()" aria-label="Cierra">×</button><span class="tag t-amb">Recordatorio</span><h2 style="margin:10px 0 4px">${esc(i.what)}</h2><div class="mut small">${esc(i.to)} · pedido ${esc(i.asked)}</div><ul class="tl" style="margin-top:14px">${i.hist.map(h=>`<li><b>${esc(h[0])}</b> · ${esc(h[1])}</li>`).join('')}</ul><h3 style="margin:16px 0 6px">Borrador preparado (editable)</h3><textarea id="rem-body">Buenos días,\n\nOs vuelvo a escribir sobre: ${i.what}. Lo pedimos ${i.asked} y aún no lo hemos recibido.\n\nNos hace falta para cerrar el mantenimiento de esta semana. ¿Podéis confirmarnos cuándo lo tendremos?\n\nGracias,\nJavier\nCarbonell (demo)</textarea><div class="act"><button class="btn ghost" onclick="closeDr()">Dejar para después</button><button class="btn" onclick="approveRem('${id}')">Aprobar (simulación)</button></div><p class="small mut">Aprobar registra la decisión en local. No se envía ningún correo.</p>`)}
-function approveRem(id){D[id]={action:'aprobada',ts:new Date().toLocaleString('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})};saveAll();closeDr();toast("Recordatorio aprobado. No se ha enviado nada.");render()}
-/* ------- Más ------- */
-function vMas(){$('#view').innerHTML=`<div class="heading"><h1>Más</h1></div><div class="card"><h2>Qué es real y qué es simulado</h2><p class="small">Maqueta independiente para la reunión del 19/11 con Javier. Todos los datos son ficticios: planos, problemas detectados, stocks, proveedores y peticiones. No está conectada al correo, al ERP ni a ninguna carpeta; aprobar solo registra la decisión dentro de este navegador. Las respuestas del asistente sobre los planos son de ejemplo, calculadas sobre los datos ficticios del documento.</p><p class="small">Lo que sí es real es el flujo: cada plano recibido pasa una revisión automática que marca lo que falta (revisión vigente, lista de piezas, firma), cada dato extraído lleva la página de origen, se puede preguntar sobre el documento con referencias, del plano validado se genera una lista de compra revisable (cantidades, proveedores y precios orientativos), y cada borrador (devolución, recordatorio o pedido) se aprueba antes de enviarse.</p></div><div class="card" style="margin-top:14px"><h2>Por qué esta demo</h2><p class="small">En la primera conversación Javier trasladó que lleva compras, recambios y logística, y que muchas veces pide planos, información y manuales y no recibe nada, o los recibe con problemas, y lo acaba haciendo todo a mano. Por eso la demo pone el plano en el centro: pedirlo, recibirlo, detectar lo que le falta, devolverlo pidiendo la corrección, consultarlo con preguntas, sacar de él los recambios y, con el plano ya validado, pasar las piezas a comprar sin hacerlo a mano, todo con aprobación humana.</p></div><div class="act"><button class="btn ghost" onclick="resetAll()">Reiniciar la demo</button></div>`}
-function resetAll(){if(!confirm('¿Borra las decisiones locales y reinicia la demo?'))return;D={};drafts=[];saveAll();toast('Demo reiniciada');go('hoy')}
-function render(){nav();({hoy:vHoy,planos:vPlanos,compra:vCompra,recambios:vRecambios,peticiones:vPeticiones,mas:vMas}[state.route]||vHoy)()}
-const _pv=new URLSearchParams(location.search);
-if(_pv.get('v'))state.route=_pv.get('v');
-if(_pv.get('t'))state.tab=_pv.get('t');
-render();
-if(_pv.get('doc'))openPlano(Number(_pv.get('doc')));
+  document.getElementById('app').innerHTML = `
+  <aside id="side">
+    <div class="brand"><div class="logo"><div class="mark">${esc(CFG.mark)}</div><div><div class="bn">${esc(CFG.company)}</div><div class="bs">AUTOMIO OS · DEMO</div></div></div></div>
+    <nav>${mods}</nav>
+    <div class="side-foot">${CFG.t.foot}</div>
+  </aside>
+  <main>
+    <div class="topbar">
+      <div class="crumb">${esc(CFG.company)} · ${esc((CFG.modules.find(m=>m.id===VIEW)||{}).label||'')}</div>
+      <div class="sp"></div>
+      <span class="pill">${CFG.t.pill}</span>
+      <div class="avatar">${esc(CFG.userIni)}</div>
+    </div>
+    <div class="content" id="content"></div>
+  </main>
+  <div class="drawer" id="drawer" onclick="if(event.target===this)closeDrawer()"></div>
+  <div class="toast" id="toast"></div>`;
+  renderView();
+}
+function go(v){ VIEW=v; location.hash=v; renderShell(); window.scrollTo(0,0); }
+window.addEventListener('hashchange',()=>{ const v=location.hash.slice(1); if(v&&v!==VIEW){VIEW=v;renderShell();} });
+
+function renderView(){
+  const m = CFG.modules.find(x=>x.id===VIEW) || CFG.modules.find(x=>x.id===CFG.home);
+  const c = document.getElementById('content'); if(!c) return;
+  c.innerHTML = '';
+  (CFG.views[m.id]||CFG.views[CFG.home])(c);
+  document.querySelector('.topbar .crumb').innerHTML = `${esc(CFG.company)} · ${esc(m.label)}`;
+  document.querySelectorAll('nav a').forEach(a=>a.classList.toggle('on', a.dataset.v===m.id));
+}
+
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.style.display='block'; clearTimeout(t._h); t._h=setTimeout(()=>t.style.display='none',2800); }
+
+function openDrawer(html){ const d=$('#drawer'); d.innerHTML=`<div class="panel">${html}</div>`; d.classList.add('on'); }
+function closeDrawer(){ $('#drawer').classList.remove('on'); drawerState=null; }
+
+function logAct(text){ S.activity.unshift({ts:new Date().toISOString(), text}); if(S.activity.length>200)S.activity.length=200; save(); }
+
+function chipRow(groups, active, onpick){
+  // groups: [{key,label,count}]
+  return `<div class="tools">${groups.map(g=>`<button class="chip ${active===g.key?'on':''}" onclick="${onpick}('${g.key}')">${esc(g.label)}${g.count!=null?` <span class="c">${g.count}</span>`:''}</button>`).join('')}</div>`;
+}
+
+function tableHTML(cols, rows, opts={}){
+  const rowFn = opts.rowFn || (()=> '');
+  const head = cols.map(c=>`<th style="${c.w?`width:${c.w}`:''}">${esc(c.l)}</th>`).join('');
+  const body = rows.length ? rows.map((r,i)=>`<tr class="row" data-i="${i}" ${rowFn(r,i)}>${cols.map(c=>`<td class="${c.wrap?'wrap':''}" style="${c.num?'text-align:right':''}">${c.f(r)}</td>`).join('')}</tr>`).join('') : `<tr><td colspan="${cols.length}" class="mut" style="text-align:center;padding:26px">${esc(opts.empty||CFG.t.empty)}</td></tr>`;
+  const foot = opts.foot || `${rows.length} ${CFG.t.records}`;
+  return `<div class="tw"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table><div class="tfoot">${foot}</div></div>`;
+}
+
+function attachRowClicks(root, rows, onclick){
+  root.querySelectorAll('tr.row').forEach(tr=>tr.addEventListener('click',ev=>{
+    if(ev.target.closest('button')||ev.target.closest('input')||ev.target.closest('select')||ev.target.closest('a')) return;
+    onclick(rows[+tr.dataset.i]);
+  }));
+}
+
+function steps(items, cur){
+  return `<div class="progress-steps">${items.map((s,i)=>`<div class="st ${i<cur?'done':i===cur?'now':''}">${esc(s)}</div>`).join('')}</div>`;
+}
+
+function kv(pairs){ return `<div class="kv">${pairs.map(([k,v])=>`<div>${esc(k)}</div><div>${v}</div>`).join('')}</div>`; }
+
+function mailPreview(m){
+  return `<div class="mailprev"><div class="mh">${esc(CFG.t.mailto)}: ${esc(m.to)} · ${esc(CFG.t.mailsubj)}: ${esc(m.subj)}</div>${m.body}</div>`;
+}
+
+function drawerTabs(tabs, active){
+  return `<div class="tabs">${tabs.map(t=>`<button class="${t.id===active?'on':''}" onclick="drawerState.tab='${t.id}';renderDrawerBody()">${esc(t.l)}</button>`).join('')}</div>`;
+}
+function renderDrawerBody(){ if(drawerState&&drawerState.render) drawerState.render(); }
+
+document.addEventListener('DOMContentLoaded', renderShell);
+
 </script></body></html>
