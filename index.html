@@ -1,6 +1,6 @@
 <!doctype html>
-<html lang="ca"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
-<title>Documentació, recanvis i peticions · Demo Carbonell v2</title>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<title>Planos, recambios y peticiones · Demo Carbonell v3</title>
 <link rel="stylesheet" href="app.css">
 <style>
 /* Carbonell-specific bits */
@@ -9,6 +9,7 @@
 .doc table{width:100%;border-collapse:collapse;margin-top:8px}
 .doc td,.doc th{border:1px solid var(--line);padding:6px 9px;text-align:left;font-size:12px}
 .doc th{background:#fafbfc}
+.doc td.miss{color:var(--red,#b42318);font-weight:650}
 mark{background:#fdf0c4;padding:0 3px;border-radius:3px}
 mark.sel{outline:2px solid var(--blu)}
 .f{padding:13px 16px;border-top:1px solid var(--line2)}
@@ -23,97 +24,152 @@ mark.sel{outline:2px solid var(--blu)}
 .draft{padding:16px;white-space:pre-wrap;font-size:13px;line-height:1.7;background:#fff}
 .sumcard{cursor:pointer;transition:box-shadow .12s}
 .sumcard:hover{box-shadow:var(--sh2)}
+.chk{display:flex;gap:9px;align-items:flex-start;padding:9px 2px;border-top:1px solid var(--line2);font-size:13px}
+.chk:first-of-type{border-top:0}
+.chk .ic{flex:none;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;margin-top:1px}
+.chk.ok .ic{background:#e4f4ea;color:#067647}
+.chk.ko .ic{background:#fde8e6;color:#b42318}
+.chk.ko{color:#101828}
+.chk.ko .why{display:block;font-size:11.5px;color:var(--mute);margin-top:2px}
+.qa{border-top:1px solid var(--line2);margin-top:6px;padding-top:12px}
+.qa .chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}
+.qa .chip{border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:12px;cursor:pointer;background:#fff;color:var(--navy)}
+.qa .chip:hover{border-color:var(--navy)}
+.qa .q{font-size:12.5px;font-weight:700;color:var(--navy);margin:10px 0 3px}
+.qa .a{font-size:13px;line-height:1.55;color:#344054}
+.qa .a .refp{display:block;font-size:11.5px;color:var(--mute);margin-top:3px}
+.qa form{display:flex;gap:8px;margin-top:10px}
+.qa input{flex:1;font:inherit;font-size:13px;border:1px solid var(--line);border-radius:8px;padding:7px 10px}
+.qa input:focus{border-color:var(--navy);outline:2px solid #b2c3e4}
 @media(max-width:900px){.split{grid-template-columns:1fr}.doc{min-height:0}#tlm{display:block!important}}
 </style></head><body>
 <div class="app"><aside id="side"></aside><main>
-<div class="topbar"><span id="tlm" style="display:none;font-weight:800;letter-spacing:.04em;color:var(--navy)">CARBONELL</span><span class="version">AUTOMIO · DOCUMENTACIÓ + RECANVIS v2</span><span class="sp"></span><span class="pill">DEMO · DADES FICTÍCIES</span></div>
+<div class="topbar"><span id="tlm" style="display:none;font-weight:800;letter-spacing:.04em;color:var(--navy)">CARBONELL</span><span class="version">AUTOMIO · PLANOS + RECAMBIOS v3</span><span class="sp"></span><span class="pill">DEMO · DATOS FICTICIOS</span></div>
 <div id="view"></div></main></div>
 <nav class="mob" id="mob"></nav><div class="drawer" id="dr"><div class="panel" id="pn"></div></div><div class="toast" id="toast"></div>
 <script>const C={key:'carbonell',name:'CARBONELL',contact:'Javier',today:'2026-11-18',
-nav:[['avui','Per revisar'],['docs','Documents'],['parts','Recanvis'],['req','Peticions'],['mes','Més']],
-docs:[
-{id:1,n:"Plànol conjunt reductora R-240",t:"Plànol",src:"Correu del proveïdor",st:"Per revisar",f:[["Referència","R-240-A","pàg. 1, caixetí"],["Rodament eix d'entrada","6208-2RS","pàg. 2, llista de peces, pos. 7"],["Rodament eix de sortida","22210 E","pàg. 2, llista de peces, pos. 9"],["Retenidor eix d'entrada","TC 40×62×8","pàg. 2, pos. 11"]]},
-{id:2,n:"Manual manteniment bomba B-17",t:"Manual",src:"PDF carregat a mà",st:"Per revisar",f:[["Interval de greixatge","cada 2.000 h","pàg. 14, §6.2"],["Greix recomanat","Tipus NLGI 2","pàg. 14, §6.2"],["Junta mecànica","Ref. no consta al document","—"]]},
-{id:3,n:"Fitxa tècnica motor M-55",t:"Fitxa",src:"Carpeta de la planta",st:"Validat",f:[["Potència","5,5 kW","pàg. 1"],["Rodament davanter","6309 C3","pàg. 3"]]},
-{id:4,n:"Esquema elèctric premsa P-12",t:"Esquema",src:"Petició a enginyeria (veure Peticions)",st:"Per revisar",f:[["Versió de l'esquema","Rev. C · 03/2025","pàg. 1, caixetí"],["Autòmat","S7-1200","pàg. 2, esquema general"]]}],
+nav:[['hoy','Por revisar'],['planos','Planos'],['recambios','Recambios'],['peticiones','Peticiones'],['mas','Más']],
+planos:[
+{id:1,n:"Plano de conjunto reductora R-240",t:"Plano",src:"Oficina técnica (interno)",st:"Con problemas",
+ checks:[["Número de revisión vigente indicado",false,"El cajetín llega sin el campo de revisión"],["Lista de piezas completa",false,"Falta el retenedor del eje de entrada (pos. 11)"],["Cotas principales legibles",true,""],["Firma del responsable de oficina técnica",false,"El cajetín llega sin firmar"]],
+ pv:{cap:"pág. 2 · lista de piezas",rows:[["7","Rodamiento eje entrada","6208-2RS",1],["9","Rodamiento eje salida","22210 E",2],["11","Retenedor eje entrada","NO CONSTA",3]]},
+ f:[["Referencia del conjunto","R-240-A","pág. 1, cajetín"],["Rodamiento eje de entrada","6208-2RS","pág. 2, lista de piezas, pos. 7"],["Rodamiento eje de salida","22210 E","pág. 2, lista de piezas, pos. 9"],["Retenedor eje de entrada","No consta en la lista de piezas","—"]],
+ qa:[{kws:["rodamiento","entrada"],q:"¿Qué rodamiento lleva el eje de entrada?",a:"Un 6208-2RS.",p:"pág. 2, lista de piezas, pos. 7"},
+     {kws:["retenedor","reten"],q:"¿Y el retenedor del eje de entrada?",a:"No consta en la lista de piezas que ha pasado oficina técnica. Es uno de los problemas detectados: conviene pedir la lista corregida antes de comprar el recambio.",p:"problema detectado en la revisión automática"},
+     {kws:["revisión","revision","versión","version","vigente"],q:"¿Qué revisión del plano es la vigente?",a:"No se indica en el documento recibido. Está marcado como problema y forma parte de la devolución preparada a oficina técnica.",p:"cajetín de la pág. 1, campo vacío"}]},
+{id:2,n:"Plano de conjunto prensa P-12",t:"Plano",src:"Pedido a oficina técnica hace 9 días",st:"Pedido · sin respuesta",checks:[],pv:null,f:[],qa:[],req:'i1'},
+{id:3,n:"Esquema eléctrico prensa P-12",t:"Esquema",src:"Oficina técnica (interno)",st:"Por revisar",
+ checks:[["Número de revisión indicado: Rev. C · 03/2025",true,""],["Leyenda de símbolos completa",true,""],["Firma del responsable",true,""]],
+ pv:{cap:"pág. 2 · esquema general",rows:[["—","Autómata","S7-1200",1],["—","Alimentación","24 V DC",0]]},
+ f:[["Versión del esquema","Rev. C · 03/2025","pág. 1, cajetín"],["Autómata","S7-1200","pág. 2, esquema general"]],
+ qa:[{kws:["autómata","automata","plc"],q:"¿Qué autómata lleva la prensa P-12?",a:"Un S7-1200.",p:"pág. 2, esquema general"},
+     {kws:["revisión","revision","versión","version"],q:"¿Qué revisión del esquema es esta?",a:"La Rev. C de 03/2025, indicada en el cajetín.",p:"pág. 1, cajetín"}]},
+{id:4,n:"Manual de mantenimiento bomba B-17",t:"Manual",src:"PDF subido a mano",st:"Por revisar",
+ checks:[["Documento completo (índice y 38 páginas)",true,""],["Referencia de la junta mecánica indicada",false,"En la pág. 14 se menciona la junta pero sin referencia"]],
+ pv:{cap:"pág. 14 · §6.2 lubricación",rows:[["—","Intervalo de engrase","cada 2.000 h",0],["—","Grasa recomendada","NLGI 2",1]]},
+ f:[["Intervalo de engrase","cada 2.000 h","pág. 14, §6.2"],["Grasa recomendada","Tipo NLGI 2","pág. 14, §6.2"],["Junta mecánica","No consta en el documento","—"]],
+ qa:[{kws:["engras","grasa","lubrica"],q:"¿Cada cuánto hay que engrasar la bomba B-17?",a:"Cada 2.000 horas, con grasa tipo NLGI 2.",p:"pág. 14, §6.2"},
+     {kws:["junta"],q:"¿Qué junta mecánica lleva la bomba?",a:"La referencia no consta en el manual. Habría que pedirla al proveedor antes de hacer el pedido.",p:"pág. 14, mencionada sin referencia"}]},
+{id:5,n:"Ficha técnica motor M-55",t:"Ficha",src:"Carpeta de la planta",st:"Validado",
+ checks:[["Datos de placa completos",true,""],["Referencia de rodamientos indicada",true,""]],
+ pv:{cap:"pág. 3 · rodamientos",rows:[["—","Rodamiento delantero","6309 C3",1]]},
+ f:[["Potencia","5,5 kW","pág. 1"],["Rodamiento delantero","6309 C3","pág. 3"]],
+ qa:[{kws:["rodamiento"],q:"¿Qué rodamiento delantero lleva el motor M-55?",a:"Un 6309 C3.",p:"pág. 3"},
+     {kws:["potencia"],q:"¿Qué potencia tiene el motor M-55?",a:"5,5 kW.",p:"pág. 1, datos de placa"}]}],
 parts:[
-{r:"6208-2RS",d:"Rodament d'una fila de boles",from:"Plànol R-240 · pos. 7",stock:2,min:4,sup:"Proveïdor A",lead:"2 dies"},
-{r:"22210 E",d:"Rodament oscil·lant de corrons",from:"Plànol R-240 · pos. 9",stock:0,min:2,sup:"Proveïdor B",lead:"5 dies"},
-{r:"TC 40×62×8",d:"Retenidor d'eix",from:"Plànol R-240 · pos. 11",stock:6,min:4,sup:"Proveïdor A",lead:"2 dies"},
-{r:"6309 C3",d:"Rodament motor M-55",from:"Fitxa M-55 · pàg. 3",stock:1,min:2,sup:"Proveïdor A",lead:"2 dies"},
-{r:"JM-B17",d:"Junta mecànica bomba B-17",from:"Manual B-17 · pàg. 14 (ref. no consta)",stock:1,min:1,sup:"Proveïdor C",lead:"7 dies"}],
+{r:"6208-2RS",d:"Rodamiento rígido de bolas",from:"Plano R-240 · pos. 7",stock:2,min:4,sup:"Proveedor A",lead:"2 días"},
+{r:"22210 E",d:"Rodamiento oscilante de rodillos",from:"Plano R-240 · pos. 9",stock:0,min:2,sup:"Proveedor B",lead:"5 días"},
+{r:"TC 40×62×8",d:"Retenedor de eje",from:"Plano R-240 · pos. 11 (no consta en la lista recibida)",stock:6,min:4,sup:"Proveedor A",lead:"2 días"},
+{r:"6309 C3",d:"Rodamiento motor M-55",from:"Ficha M-55 · pág. 3",stock:1,min:2,sup:"Proveedor A",lead:"2 días"},
+{r:"JM-B17",d:"Junta mecánica bomba B-17",from:"Manual B-17 · pág. 14 (ref. no consta)",stock:1,min:1,sup:"Proveedor C",lead:"7 días"}],
 info:[
-{id:'i1',what:"Esquema hidràulic actualitzat de la premsa P-12",to:"Enginyeria (intern)",asked:"fa 9 dies",hist:[["fa 9 dies","Petició feta per correu."],["fa 6 dies","Recordatori sense resposta."]]},
-{id:'i2',what:"Manual de la talladora T-3 amb la revisió vigent",to:"Proveïdor de la talladora",asked:"fa 5 dies",hist:[["fa 5 dies","Petició enviada al comercial."]]},
-{id:'i3',what:"Certificat de material de l'eix de la R-240",to:"Proveïdor A",asked:"fa 2 dies",hist:[["fa 2 dies","Petició enviada."],["ahir","Responen que l'adjunten aquesta setmana."]]}]};
-const $=s=>document.querySelector(s);const LS=C.key+'-v2';
+{id:'i1',what:"Plano de conjunto de la prensa P-12 (revisión vigente)",to:"Oficina técnica (interno)",asked:"hace 9 días",hist:[["hace 9 días","Pedido por correo."],["hace 6 días","Recordatorio sin respuesta."]]},
+{id:'i2',what:"Manual de la talladora T-3 con la revisión vigente",to:"Proveedor de la talladora",asked:"hace 5 días",hist:[["hace 5 días","Petición enviada al comercial."]]},
+{id:'i3',what:"Certificado de material del eje de la R-240",to:"Proveedor A",asked:"hace 2 días",hist:[["hace 2 días","Petición enviada."],["ayer","Responden que lo adjuntan esta semana."]]}]};
+const $=s=>document.querySelector(s);const LS=C.key+'-v3';
 let D={};try{D=JSON.parse(localStorage.getItem(LS)||'{}')}catch(e){}
-let state={route:'avui',tab:'sup',open:null};
+let state={route:'hoy',tab:'sup',open:null};
 let drafts=[];try{drafts=JSON.parse(localStorage.getItem(LS+'-drafts')||'[]')}catch(e){}
 function saveAll(){try{localStorage.setItem(LS,JSON.stringify(D));localStorage.setItem(LS+'-drafts',JSON.stringify(drafts))}catch(e){}}
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 function toast(t){const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(e._t);e._t=setTimeout(()=>e.style.display='none',2600)}
 function go(r,x){state.route=r;if(x&&x.tab)state.tab=x.tab;closeDr();render();window.scrollTo(0,0)}
 function icon(k){const paths={inbox:'M3 4h18v15H3z M3 12h5l2 3h4l2-3h5',doc:'M6 2h9l5 5v15H6z M14 2v6h6',gear:'M12 8a4 4 0 100 8 4 4 0 000-8z M12 2v3m0 14v3M2 12h3m14 0h3M4.9 4.9l2.1 2.1m9.9 9.9l2.1 2.1m0-14.1l-2.1 2.1M7 17l-2.1 2.1',send:'M22 2L11 13M22 2l-7 20-4-9-9-4z',more:'M4 6h16M4 12h16M4 18h16'};return `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${paths[k]||paths.more}"/></svg>`}
-const ICONS={avui:'inbox',docs:'doc',parts:'gear',req:'send',mes:'more'};
-function pendingCount(){return C.docs.filter(d=>d.st==='Per revisar'&&!D['doc'+d.id]).length+C.parts.filter(p=>p.stock<p.min).length+C.info.filter(i=>!D[i.id]).length}
-function navHTML(){return C.nav.map(([k,t])=>`<a role="button" tabindex="0" class="${state.route===k?'on':''}" onclick="go('${k}')" onkeydown="if(event.key==='Enter')go('${k}')"><span class="navicon">${icon(ICONS[k])}</span>${t}${k==='avui'?`<span class="n">${pendingCount()}</span>`:''}</a>`).join('')}
-function nav(){$('#side').innerHTML=`<div class="brand"><div style="font-weight:800;font-size:19px;letter-spacing:.04em;color:var(--navy)">CARBONELL</div><small>ASSISTENT DE COMPRES I RECANVIS</small></div><div class="nav-section">OPERACIONS</div>${navHTML()}<div class="side-foot"><div class="identity"><span class="avatar">J</span><div>Javier<br><span class="mut">Entorn de demostració</span></div></div><div class="independent">Demo independent · Dades fictícies<br>No connectada al correu ni a l'ERP</div></div>`;$('#mob').innerHTML=navHTML()}
+const ICONS={hoy:'inbox',planos:'doc',recambios:'gear',peticiones:'send',mas:'more'};
+function planosPend(){return C.planos.filter(d=>(d.st==='Por revisar'||d.st==='Con problemas')&&!D['doc'+d.id])}
+function pendingCount(){return planosPend().length+C.parts.filter(p=>p.stock<p.min).length+C.info.filter(i=>!D[i.id]).length}
+function navHTML(){return C.nav.map(([k,t])=>`<a role="button" tabindex="0" class="${state.route===k?'on':''}" onclick="go('${k}')" onkeydown="if(event.key==='Enter')go('${k}')"><span class="navicon">${icon(ICONS[k])}</span>${t}${k==='hoy'?`<span class="n">${pendingCount()}</span>`:''}</a>`).join('')}
+function nav(){$('#side').innerHTML=`<div class="brand"><div style="font-weight:800;font-size:19px;letter-spacing:.04em;color:var(--navy)">CARBONELL</div><small>ASISTENTE DE COMPRAS Y RECAMBIOS</small></div><div class="nav-section">OPERACIONES</div>${navHTML()}<div class="side-foot"><div class="identity"><span class="avatar">J</span><div>Javier<br><span class="mut">Entorno de demostración</span></div></div><div class="independent">Demo independiente · Datos ficticios<br>No conectada al correo ni al ERP</div></div>`;$('#mob').innerHTML=navHTML()}
 function closeDr(){$('#dr').classList.remove('on')}
 $('#dr').addEventListener('click',e=>{if(e.target.id==='dr')closeDr()});
 function openDr(h){$('#pn').innerHTML=h;$('#dr').classList.add('on')}
-/* ------- Avui ------- */
-function vAvui(){const docsP=C.docs.filter(d=>d.st==='Per revisar'&&!D['doc'+d.id]);const partsP=C.parts.filter(p=>p.stock<p.min);const infoP=C.info.filter(i=>!D[i.id]);
- let h=`<div class="heading"><div class="eyebrow">COMPRES / RECANVIS / DOCUMENTACIÓ</div><h1>Per revisar</h1><div class="sub">El que necessita la teva decisió avui. Res no s'envia ni es valida sense tu.</div></div>`;
+function tagOf(d,done){if(done||d.st==='Validado')return `<span class="tag t-grn">Validado</span>`;if(d.st==='Con problemas')return `<span class="tag t-red">Con problemas</span>`;if(d.st.indexOf('Pedido')===0)return `<span class="tag t-amb">${esc(d.st)}</span>`;return `<span class="tag t-amb">${esc(d.st)}</span>`}
+/* ------- Hoy ------- */
+function vHoy(){const docsP=planosPend();const partsP=C.parts.filter(p=>p.stock<p.min);const infoP=C.info.filter(i=>!D[i.id]);
+ let h=`<div class="heading"><div class="eyebrow">COMPRAS / RECAMBIOS / PLANOS</div><h1>Por revisar</h1><div class="sub">Lo que necesita tu decisión hoy. Nada se envía ni se valida sin ti.</div></div>`;
  h+=`<div class="grid k3" style="margin-bottom:16px">
- <div class="card kpi sumcard" onclick="go('docs')"><b>${docsP.length}</b><span>Documents per validar</span></div>
- <div class="card kpi ${partsP.length?'warn':''} sumcard" onclick="go('parts')"><b>${partsP.length}</b><span>Recanvis sota mínim</span></div>
- <div class="card kpi ${infoP.length?'bad':''} sumcard" onclick="go('req',{tab:'info'})"><b>${infoP.length}</b><span>Peticions d'informació obertes</span></div></div>`;
- h+=`<div class="card"><h2>Cua del dia</h2>`;
- if(docsP.length)h+=docsP.map(d=>`<div class="item"><span class="dot d-blu"></span><div class="b"><b>${esc(d.n)}</b><div class="small mut">${d.t} · ${esc(d.src)} · espera la teva validació</div></div><button class="btn ghost" onclick="openDoc(${d.id})">Revisar</button></div>`).join('');
- if(partsP.length)h+=partsP.map((p)=>`<div class="item"><span class="dot d-amb"></span><div class="b"><b>${esc(p.r)}</b> · ${esc(p.d)}<div class="small mut">Estoc ${p.stock}/${p.min} · ${esc(p.sup)} · ${esc(p.lead)}</div></div><button class="btn ghost" onclick="ask('${esc(p.r)}')">Preparar petició</button></div>`).join('');
- if(infoP.length)h+=infoP.map(i=>`<div class="item"><span class="dot d-red"></span><div class="b"><b>${esc(i.what)}</b><div class="small mut">${esc(i.to)} · demanat ${esc(i.asked)}</div></div><button class="btn ghost" onclick="remindInfo('${i.id}')">Preparar recordatori</button></div>`).join('');
- if(!docsP.length&&!partsP.length&&!infoP.length)h+=`<div class="empty">Tot revisat. No queda res pendent.</div>`;
- h+=`</div><p class="small mut" style="margin-top:14px">Aprovar registra la decisió en local. En aquesta demo no s'envia cap correu ni s'escriu a cap sistema.</p>`;
+ <div class="card kpi ${docsP.some(d=>d.st==='Con problemas')?'bad':''} sumcard" onclick="go('planos')"><b>${docsP.length}</b><span>Planos y documentos por validar${docsP.some(d=>d.st==='Con problemas')?' · 1 con problemas':''}</span></div>
+ <div class="card kpi ${partsP.length?'warn':''} sumcard" onclick="go('recambios')"><b>${partsP.length}</b><span>Recambios bajo mínimo</span></div>
+ <div class="card kpi ${infoP.length?'bad':''} sumcard" onclick="go('peticiones',{tab:'info'})"><b>${infoP.length}</b><span>Peticiones de información abiertas</span></div></div>`;
+ h+=`<div class="card"><h2>Cola del día</h2>`;
+ if(docsP.length)h+=docsP.map(d=>`<div class="item"><span class="dot ${d.st==='Con problemas'?'d-red':'d-blu'}"></span><div class="b"><b>${esc(d.n)}</b><div class="small mut">${d.t} · ${esc(d.src)} · ${d.st==='Con problemas'?'se han detectado problemas en la revisión automática':'espera tu validación'}</div></div><button class="btn ghost" onclick="openPlano(${d.id})">Revisar</button></div>`).join('');
+ if(partsP.length)h+=partsP.map((p)=>`<div class="item"><span class="dot d-amb"></span><div class="b"><b>${esc(p.r)}</b> · ${esc(p.d)}<div class="small mut">Stock ${p.stock}/${p.min} · ${esc(p.sup)} · ${esc(p.lead)}</div></div><button class="btn ghost" onclick="ask('${esc(p.r)}')">Preparar petición</button></div>`).join('');
+ if(infoP.length)h+=infoP.map(i=>`<div class="item"><span class="dot d-red"></span><div class="b"><b>${esc(i.what)}</b><div class="small mut">${esc(i.to)} · pedido ${esc(i.asked)}</div></div><button class="btn ghost" onclick="remindInfo('${i.id}')">Preparar recordatorio</button></div>`).join('');
+ if(!docsP.length&&!partsP.length&&!infoP.length)h+=`<div class="empty">Todo revisado. No queda nada pendiente.</div>`;
+ h+=`</div><p class="small mut" style="margin-top:14px">Aprobar registra la decisión en local. En esta demo no se envía ningún correo ni se escribe en ningún sistema.</p>`;
  $('#view').innerHTML=h}
-/* ------- Documents ------- */
-function vDocs(){$('#view').innerHTML=`<div class="heading"><div class="eyebrow">DOCUMENTACIÓ TÈCNICA</div><h1>Documents</h1><div class="sub">Plànols, manuals i fitxes en un sol lloc. Cada dada extreta porta la pàgina d'origen i espera la teva revisió.</div></div><div class="card">${C.docs.map(d=>{const done=D['doc'+d.id];return `<div class="item" style="cursor:pointer" onclick="openDoc(${d.id})"><span class="dot ${d.st==='Validat'||done?'d-grn':'d-amb'}"></span><div class="b"><b>${esc(d.n)}</b><div class="small mut">${d.t} · ${esc(d.src)}</div></div><span class="tag ${d.st==='Validat'||done?'t-grn':'t-amb'}">${done?'Validat':esc(d.st)}</span></div>`}).join('')}</div>`}
-function openDoc(id){const d=C.docs.find(x=>x.id===id);if(!d)return;const done=D['doc'+id];
- const prev=`<div class="pg">PREVISUALITZACIÓ SIMULADA · ${esc(d.f[0][2].split(',')[0])}</div><b>LLISTA DE PECES</b><table><tr><th>Pos.</th><th>Descripció</th><th>Ref.</th></tr><tr><td>7</td><td>Rodament eix entrada</td><td><mark id="h1">6208-2RS</mark></td></tr><tr><td>9</td><td>Rodament eix sortida</td><td><mark id="h2">22210 E</mark></td></tr><tr><td>11</td><td>Retenidor</td><td><mark id="h3">TC 40×62×8</mark></td></tr></table><p class="mut small" style="margin-top:14px">Document simulat per a la demo. En producció veuries el PDF real amb els camps ressaltats a sobre.</p>`;
- const fields=d.f.map((f,i)=>`<div class="f"><label>${esc(f[0])}</label><div class="v">${f[1].startsWith('Ref. no')?`<span class="tag t-amb">No consta al document</span>`:`<input value="${esc(f[1])}" ${done?'disabled':''}>`}<span class="ref" onclick="hl(${i})">${esc(f[2])}</span></div></div>`).join('');
- openDr(`<button class="x" onclick="closeDr()" aria-label="Tanca">×</button><span class="tag ${d.st==='Validat'||done?'t-grn':'t-amb'}">${done?'Validat':esc(d.st)}</span><h2 style="margin:10px 0 4px">${esc(d.n)}</h2><div class="mut small">${d.t} · ${esc(d.src)}</div><p class="small mut" style="margin:10px 0 16px">Revisa cada dada amb el seu origen. Res es dona per bo sense la teva confirmació.</p><div class="split"><div class="card doc">${prev}</div><div class="card" style="padding:4px 0">${fields}<div class="act" style="padding:12px 16px">${done?`<span class="dec">Validat · ${done.ts}</span> <button class="btn ghost" onclick="undoDoc(${id})">Desfés</button>`:`<button class="btn ghost" onclick="closeDr()">Deixar per després</button><button class="btn" onclick="okDoc(${id})">Validar dades</button>`}</div></div></div>`)}
+/* ------- Planos ------- */
+function vPlanos(){$('#view').innerHTML=`<div class="heading"><div class="eyebrow">DOCUMENTACIÓN TÉCNICA</div><h1>Planos</h1><div class="sub">Planos, esquemas y manuales en un solo sitio. Cada dato extraído lleva su página de origen, la revisión automática marca lo que llega con problemas y nada se da por bueno sin ti.</div></div><div class="card">${C.planos.map(d=>{const done=D['doc'+d.id];return `<div class="item" style="cursor:pointer" onclick="openPlano(${d.id})"><span class="dot ${d.st==='Con problemas'?'d-red':(d.st==='Validat'||done||d.st==='Validado')?'d-grn':'d-amb'}"></span><div class="b"><b>${esc(d.n)}</b><div class="small mut">${d.t} · ${esc(d.src)}</div></div>${tagOf(d,done)}</div>`}).join('')}</div><p class="small mut" style="margin-top:14px">El plano de la prensa P-12 sigue pedido a oficina técnica sin respuesta: está en Peticiones, con su historial y el recordatorio preparado.</p>`}
+function openPlano(id){const d=C.planos.find(x=>x.id===id);if(!d)return;const done=D['doc'+id];const dev=D['dev'+id];
+ if(!d.f.length){openDr(`<button class="x" onclick="closeDr()" aria-label="Cierra">×</button><span class="tag t-amb">${esc(d.st)}</span><h2 style="margin:10px 0 4px">${esc(d.n)}</h2><div class="mut small">${d.t} · ${esc(d.src)}</div><p class="small" style="margin:12px 0">Este plano aún no ha llegado. Se pidió a oficina técnica hace 9 días y el recordatorio no tuvo respuesta.</p><div class="act"><button class="btn" onclick="closeDr();remindInfo('${d.req||'i1'}')">Preparar recordatorio</button></div>`);return}
+ const ko=d.checks.filter(c=>!c[1]);
+ const prev=d.pv?`<div class="pg">PREVISUALIZACIÓN SIMULADA · ${esc(d.pv.cap)}</div><b>LISTA DE PIEZAS / DATOS</b><table><tr><th>Pos.</th><th>Descripción</th><th>Ref.</th></tr>${d.pv.rows.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td class="${r[3]===3?'miss':''}">${r[3]===3?esc(r[2]):`<mark id="h${r[3]}">${esc(r[2])}</mark>`}</td></tr>`).join('')}</table><p class="mut small" style="margin-top:14px">Documento simulado para la demo. En producción verías el PDF real con los campos resaltados encima.</p>`:'';
+ const checks=d.checks.length?`<h3 style="margin:0 0 4px">Revisión automática</h3>${ko.length?`<p class="small mut" style="margin:0 0 8px">${ko.length} problema${ko.length>1?'s':''} detectado${ko.length>1?'s':''} en lo recibido de oficina técnica.</p>`:`<p class="small mut" style="margin:0 0 8px">Sin problemas detectados.</p>`}${d.checks.map(c=>`<div class="chk ${c[1]?'ok':'ko'}"><span class="ic">${c[1]?'✓':'!'}</span><span>${esc(c[0])}${c[1]?'':`<span class="why">${esc(c[2])}</span>`}</span></div>`).join('')}`:'';
+ const fields=d.f.map((f,i)=>`<div class="f"><label>${esc(f[0])}</label><div class="v">${f[1].startsWith('No consta')?`<span class="tag t-amb">No consta en el documento</span>`:`<input value="${esc(f[1])}" ${done?'disabled':''}>`}<span class="ref" onclick="hl(${i})">${esc(f[2])}</span></div></div>`).join('');
+ const qa=d.qa.length?`<div class="qa"><h3 style="margin:0 0 8px">Preguntar sobre el plano</h3><div class="chips">${d.qa.map((q,qi)=>`<span class="chip" onclick="askQ(${id},${qi})">${esc(q.q)}</span>`).join('')}</div><div id="qa-log"></div><form onsubmit="return askFree(${id},this)"><input name="q" placeholder="Escribe una pregunta sobre el documento…" autocomplete="off"><button class="btn ghost" type="submit">Preguntar</button></form><p class="small mut" style="margin-top:8px">Respuestas simuladas con los datos de ejemplo de este documento. En producción respondería sobre el documento real indicando la página.</p></div>`:'';
+ const acts=done?`<span class="dec">Validado · ${done.ts}</span> <button class="btn ghost" onclick="undoDoc(${id})">Deshacer</button>`
+  :`${ko.length?`<button class="btn ghost" onclick="prepDev(${id})">${dev?'Ver devolución preparada':'Preparar devolución con lo que falta'}</button>`:''}<button class="btn ghost" onclick="closeDr()">Dejar para después</button><button class="btn" onclick="okDoc(${id})">Validar datos</button>`;
+ openDr(`<button class="x" onclick="closeDr()" aria-label="Cierra">×</button>${tagOf(d,done)}<h2 style="margin:10px 0 4px">${esc(d.n)}</h2><div class="mut small">${d.t} · ${esc(d.src)}</div><p class="small mut" style="margin:10px 0 16px">Revisa cada dato con su origen. Nada se da por bueno sin tu confirmación.</p>${checks?`<div class="card" style="padding:12px 16px;margin-bottom:14px">${checks}</div>`:''}<div class="split"><div class="card doc">${prev}</div><div class="card" style="padding:4px 0">${fields}<div class="act" style="padding:12px 16px">${acts}</div></div></div>${qa?`<div class="card" style="margin-top:14px;padding:14px 16px">${qa}</div>`:''}`)}
 function hl(i){document.querySelectorAll('mark').forEach(x=>x.classList.remove('sel'));const e=document.getElementById('h'+i);if(e){e.classList.add('sel');e.scrollIntoView({block:'center'})}}
-function okDoc(id){D['doc'+id]={ts:new Date().toLocaleString('ca-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})};saveAll();closeDr();toast('Document validat. Registrat en local.');render()}
-function undoDoc(id){delete D['doc'+id];saveAll();closeDr();toast('Validació desfeta');render()}
-/* ------- Recanvis ------- */
-function vParts(){$('#view').innerHTML=`<div class="heading"><div class="eyebrow">MAGATZEM</div><h1>Recanvis</h1><div class="sub">Peces trobades als documents validats, amb estoc i proveïdor habitual. Preparar una petició no l'envia: passa per la teva aprovació.</div></div><div class="card tw"><table><thead><tr><th>Referència</th><th>Origen</th><th>Proveïdor</th><th>Estoc</th><th>Estat</th><th></th></tr></thead><tbody>${C.parts.map(p=>{const low=p.stock<p.min;return `<tr><td><b>${esc(p.r)}</b><div class="small mut">${esc(p.d)}</div></td><td class="small mut">${esc(p.from)}</td><td class="small">${esc(p.sup)} · ${esc(p.lead)}</td><td>${p.stock} / ${p.min}</td><td><span class="tag ${low?'t-red':'t-grn'}">${low?'Sota mínim':'Correcte'}</span></td><td>${low?`<button class="btn ghost" onclick="ask('${esc(p.r)}')">Preparar petició</button>`:''}</td></tr>`}).join('')}</tbody></table></div>`}
+function okDoc(id){D['doc'+id]={ts:new Date().toLocaleString('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})};saveAll();closeDr();toast('Documento validado. Registrado en local.');render()}
+function undoDoc(id){delete D['doc'+id];saveAll();closeDr();toast('Validación deshecha');render()}
+function askQ(id,qi){const d=C.planos.find(x=>x.id===id);if(!d)return;const q=d.qa[qi];if(!q)return;appendQA(q.q,`${esc(q.a)}<span class="refp">Origen: ${esc(q.p)}</span>`)}
+function askFree(id,form){const txt=(form.q.value||'').trim();if(!txt)return false;const d=C.planos.find(x=>x.id===id);form.q.value='';
+ if(d){const low=txt.toLowerCase();const hit=d.qa.find(q=>q.kws.some(k=>low.includes(k)));
+  if(hit){appendQA(txt,`${esc(hit.a)}<span class="refp">Origen: ${esc(hit.p)}</span>`);return false}}
+ appendQA(txt,`En esta demo solo puedo responder con los datos de ejemplo de este documento. En producción respondería sobre el plano real indicando la página y el cajetín de donde sale cada dato.`);return false}
+function appendQA(q,a){const log=document.getElementById('qa-log');if(!log)return;log.insertAdjacentHTML('beforeend',`<div class="q">${esc(q)}</div><div class="a">${a}</div>`);log.lastElementChild.scrollIntoView({block:'nearest'})}
+function prepDev(id){const d=C.planos.find(x=>x.id===id);if(!d)return;const dev=D['dev'+id];const ko=d.checks.filter(c=>!c[1]);
+ openDr(`<button class="x" onclick="closeDr()" aria-label="Cierra">×</button><span class="tag t-amb">Devolución a oficina técnica</span><h2 style="margin:10px 0 4px">${esc(d.n)}</h2><div class="mut small">${esc(d.src)}</div><p class="small" style="margin:12px 0 6px">El plano llega con ${ko.length} problema${ko.length>1?'s':''}. Este borrador devuelve el documento pidiendo justo lo que falta:</p><ul class="tl" style="margin:0 0 12px">${ko.map(c=>`<li>${esc(c[0])}: ${esc(c[2])}</li>`).join('')}</ul><h3 style="margin:16px 0 6px">Borrador preparado (editable)</h3><textarea id="dev-body">Para: Oficina técnica\nAsunto: Plano R-240 · faltan datos para validarlo\n\nHola,\n\nHe revisado el plano de conjunto de la reductora R-240 y no puedo darlo por bueno:\n${ko.map(c=>'- '+c[0]+': '+c[2]).join('\n')}\n\n¿Me pasáis la versión corregida? Lo necesito para cerrar el pedido de recambios de esta semana.\n\nGracias,\nJavier\nCarbonell (demo)</textarea><div class="act"><button class="btn ghost" onclick="closeDr()">Dejar para después</button><button class="btn" onclick="approveDev(${id})">Aprobar (simulación)</button></div>${dev?`<p class="small dec">Ya aprobada ${dev.ts} · no se ha enviado nada</p>`:`<p class="small mut">Aprobar registra la decisión en local. No se envía ningún correo.</p>`}`)}
+function approveDev(id){D['dev'+id]={action:'aprobada',ts:new Date().toLocaleString('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})};saveAll();closeDr();toast('Devolución aprobada. En producción quedaría lista para enviar; aquí no se envía nada.');render()}
+/* ------- Recambios ------- */
+function vRecambios(){$('#view').innerHTML=`<div class="heading"><div class="eyebrow">ALMACÉN</div><h1>Recambios</h1><div class="sub">Piezas encontradas en los documentos validados, con stock y proveedor habitual. Preparar una petición no la envía: pasa por tu aprobación.</div></div><div class="card tw"><table><thead><tr><th>Referencia</th><th>Origen</th><th>Proveedor</th><th>Stock</th><th>Estado</th><th></th></tr></thead><tbody>${C.parts.map(p=>{const low=p.stock<p.min;return `<tr><td><b>${esc(p.r)}</b><div class="small mut">${esc(p.d)}</div></td><td class="small mut">${esc(p.from)}</td><td class="small">${esc(p.sup)} · ${esc(p.lead)}</td><td>${p.stock} / ${p.min}</td><td><span class="tag ${low?'t-red':'t-grn'}">${low?'Bajo mínimo':'Correcto'}</span></td><td>${low?`<button class="btn ghost" onclick="ask('${esc(p.r)}')">Preparar petición</button>`:''}</td></tr>`}).join('')}</tbody></table></div>`}
 function ask(ref){const p=C.parts.find(x=>x.r===ref);if(!p)return;const q=p.min*2-p.stock;
- if(!drafts.some(d=>d.ref===ref&&!D['draft-'+ref])){drafts.push({kind:'sup',ref,body:`Per a: ${p.sup}\nAssumpte: Petició de recanvis ${p.r}\n\nBon dia,\n\nEns caldrien ${q} unitats de ${p.r} (${p.d}).\nOrigen de la referència: ${p.from}.\nTermini habitual: ${p.lead}.\n\nGràcies.`});saveAll()}
- go('req',{tab:'sup'});toast('Esborrany preparat a Peticions')}
-/* ------- Peticions ------- */
-function vReq(){const t=state.tab;let h=`<div class="heading"><div class="eyebrow">SORTINTS</div><h1>Peticions</h1><div class="sub">Esborranys preparats per revisar. Aprovar registra la decisió; en aquesta demo no s'envia res.</div></div><div class="tabs">${[['sup','A proveïdor'],['info',"D'informació"]].map(([k,tt])=>`<button class="${t===k?'on':''}" onclick="state.tab='${k}';render()">${tt}</button>`).join('')}</div><div id="mb"></div>`;
+ if(!drafts.some(d=>d.ref===ref&&!D['draft-'+ref])){drafts.push({kind:'sup',ref,body:`Para: ${p.sup}\nAsunto: Petición de recambios ${p.r}\n\nBuenos días,\n\nNecesitaríamos ${q} unidades de ${p.r} (${p.d}).\nOrigen de la referencia: ${p.from}.\nPlazo habitual: ${p.lead}.\n\nGracias.`});saveAll()}
+ go('peticiones',{tab:'sup'});toast('Borrador preparado en Peticiones')}
+/* ------- Peticiones ------- */
+function vPeticiones(){const t=state.tab;let h=`<div class="heading"><div class="eyebrow">SALIENTES</div><h1>Peticiones</h1><div class="sub">Borradores preparados para revisar. Aprobar registra la decisión; en esta demo no se envía nada.</div></div><div class="tabs">${[['sup','A proveedor'],['info','De información y planos']].map(([k,tt])=>`<button class="${t===k?'on':''}" onclick="state.tab='${k}';render()">${tt}</button>`).join('')}</div><div id="mb"></div>`;
  $('#view').innerHTML=h;const mb=$('#mb');
  if(t==='sup'){const open=drafts.filter(d=>!D['draft-'+d.ref]);const done=drafts.filter(d=>D['draft-'+d.ref]);
-  let x=open.length?open.map(d=>`<div class="card" style="margin-bottom:12px"><div class="headrow"><h3>Petició de recanvis ${esc(d.ref)}</h3><span class="tag t-amb">Esborrany</span></div><div class="mailprev"><div class="draft" id="db-${esc(d.ref)}" contenteditable="true">${esc(d.body)}</div></div><div class="act"><button class="btn ghost" onclick="discardDraft('${esc(d.ref)}')">Descartar</button><button class="btn" onclick="approveDraft('${esc(d.ref)}')">Aprovar (simulació)</button></div></div>`).join(''):`<div class="card empty">Cap petició pendent. Tria una peça sota mínim a Recanvis.</div>`;
-  if(done.length)x+=`<div class="card"><h2>Registre</h2>${done.map(d=>{const dd=D['draft-'+d.ref];return `<div class="item"><span class="dot ${dd.action==='aprovada'?'d-grn':'d-red'}"></span><div class="b"><b>Petició ${esc(d.ref)}</b><div class="small"><span class="dec ${dd.action==='aprovada'?'':'rej'}">${dd.action==='aprovada'?'Aprovada (no enviada)':'Descartada'}</span> · ${dd.ts}</div></div></div>`}).join('')}</div>`;
+  let x=open.length?open.map(d=>`<div class="card" style="margin-bottom:12px"><div class="headrow"><h3>Petición de recambios ${esc(d.ref)}</h3><span class="tag t-amb">Borrador</span></div><div class="mailprev"><div class="draft" id="db-${esc(d.ref)}" contenteditable="true">${esc(d.body)}</div></div><div class="act"><button class="btn ghost" onclick="discardDraft('${esc(d.ref)}')">Descartar</button><button class="btn" onclick="approveDraft('${esc(d.ref)}')">Aprobar (simulación)</button></div></div>`).join(''):`<div class="card empty">Ninguna petición pendiente. Elige una pieza bajo mínimo en Recambios.</div>`;
+  if(done.length)x+=`<div class="card"><h2>Registro</h2>${done.map(d=>{const dd=D['draft-'+d.ref];return `<div class="item"><span class="dot ${dd.action==='aprobada'?'d-grn':'d-red'}"></span><div class="b"><b>Petición ${esc(d.ref)}</b><div class="small"><span class="dec ${dd.action==='aprobada'?'':'rej'}">${dd.action==='aprobada'?'Aprobada (no enviada)':'Descartada'}</span> · ${dd.ts}</div></div></div>`}).join('')}</div>`;
   mb.innerHTML=x;return}
- let x=C.info.map(i=>{const dd=D[i.id];return `<div class="card" style="margin-bottom:12px"><div class="headrow"><div><h3>${esc(i.what)}</h3><div class="small mut">${esc(i.to)} · demanat ${esc(i.asked)}</div></div>${dd?`<span class="tag t-grn">Recordatori aprovat</span>`:`<button class="btn ghost" onclick="remindInfo('${i.id}')">Preparar recordatori</button>`}</div><ul class="tl" style="margin-top:12px">${i.hist.map(h=>`<li><b>${esc(h[0])}</b> · ${esc(h[1])}</li>`).join('')}</ul>${dd?`<div class="small dec" style="margin-top:8px">Aprovat ${dd.ts} · no s'ha enviat res</div>`:''}</div>`}).join('');
- mb.innerHTML=x||`<div class="card empty">Cap petició d'informació oberta.</div>`}
+ let x=C.info.map(i=>{const dd=D[i.id];return `<div class="card" style="margin-bottom:12px"><div class="headrow"><div><h3>${esc(i.what)}</h3><div class="small mut">${esc(i.to)} · pedido ${esc(i.asked)}</div></div>${dd?`<span class="tag t-grn">Recordatorio aprobado</span>`:`<button class="btn ghost" onclick="remindInfo('${i.id}')">Preparar recordatorio</button>`}</div><ul class="tl" style="margin-top:12px">${i.hist.map(h=>`<li><b>${esc(h[0])}</b> · ${esc(h[1])}</li>`).join('')}</ul>${dd?`<div class="small dec" style="margin-top:8px">Aprobado ${dd.ts} · no se ha enviado nada</div>`:''}</div>`}).join('');
+ mb.innerHTML=x||`<div class="card empty">Ninguna petición de información abierta.</div>`}
 function discardDraft(ref){const el=document.getElementById('db-'+CSS.escape(ref));if(el){const d=drafts.find(x=>x.ref===ref);if(d)d.body=el.innerText}
- D['draft-'+ref]={action:'descartada',ts:new Date().toLocaleString('ca-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})};saveAll();toast('Esborrany descartat');render()}
+ D['draft-'+ref]={action:'descartada',ts:new Date().toLocaleString('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})};saveAll();toast('Borrador descartado');render()}
 function approveDraft(ref){const el=document.getElementById('db-'+CSS.escape(ref));if(el){const d=drafts.find(x=>x.ref===ref);if(d)d.body=el.innerText}
- D['draft-'+ref]={action:'aprovada',ts:new Date().toLocaleString('ca-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})};saveAll();toast("Aprovat. En producció quedaria a punt per enviar; aquí no s’envia res.");render()}
+ D['draft-'+ref]={action:'aprobada',ts:new Date().toLocaleString('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})};saveAll();toast("Aprobada. En producción quedaría lista para enviar; aquí no se envía nada.");render()}
 function remindInfo(id){const i=C.info.find(x=>x.id===id);if(!i)return;
- openDr(`<button class="x" onclick="closeDr()" aria-label="Tanca">×</button><span class="tag t-amb">Recordatori</span><h2 style="margin:10px 0 4px">${esc(i.what)}</h2><div class="mut small">${esc(i.to)} · demanat ${esc(i.asked)}</div><ul class="tl" style="margin-top:14px">${i.hist.map(h=>`<li><b>${esc(h[0])}</b> · ${esc(h[1])}</li>`).join('')}</ul><h3 style="margin:16px 0 6px">Esborrany preparat (editable)</h3><textarea id="rem-body">Bon dia,\n\nUs torno a escriure sobre: ${i.what}. Ho vam demanar ${i.asked} i encara no l'hem rebut.\n\nEns fa falta per tancar el manteniment d'aquesta setmana. Ens podeu confirmar quan el tindrem?\n\nGràcies,\nJavier\nCarbonell (demo)</textarea><div class="act"><button class="btn ghost" onclick="closeDr()">Deixar per després</button><button class="btn" onclick="approveRem('${id}')">Aprovar (simulació)</button></div><p class="small mut">Aprovar registra la decisió en local. No s'envia cap correu.</p>`)}
-function approveRem(id){D[id]={action:'aprovada',ts:new Date().toLocaleString('ca-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})};saveAll();closeDr();toast("Recordatori aprovat. No s’ha enviat res.");render()}
-/* ------- Més ------- */
-function vMes(){$('#view').innerHTML=`<div class="heading"><h1>Més</h1></div><div class="card"><h2>Què és real i què és simulat</h2><p class="small">Maqueta independent per a la reunió del 19/11 amb el Javier. Totes les dades són fictícies: documents, estocs, proveïdors i peticions. No està connectada al correu, a l'ERP ni a cap carpeta; aprovar només registra la decisió dins d'aquest navegador.</p><p class="small">El que sí és real és el flux: cada dada extreta d'un document porta la pàgina d'origen, tot espera revisió humana i cada esborrany s'aprova abans d'enviar-se.</p></div><div class="card" style="margin-top:14px"><h2>Per què aquesta demo</h2><p class="small">A la primera conversa el Javier va traslladar que porta compres, recanvis i logística, i que sovint demana plànols, manuals i informació i no rep resposta: ho acaba fent tot a mà. Per això la demo posa al centre tres coses: la documentació validada amb origen, els recanvis amb estoc i mínims, i les peticions d'informació amb historial i recordatoris preparats.</p></div><div class="act"><button class="btn ghost" onclick="resetAll()">Reiniciar la demo</button></div>`}
-function resetAll(){if(!confirm('Esborra les decisions locals i reinicia la demo?'))return;D={};drafts=[];saveAll();toast('Demo reiniciada');go('avui')}
-function render(){nav();({avui:vAvui,docs:vDocs,parts:vParts,req:vReq,mes:vMes}[state.route]||vAvui)()}
+ openDr(`<button class="x" onclick="closeDr()" aria-label="Cierra">×</button><span class="tag t-amb">Recordatorio</span><h2 style="margin:10px 0 4px">${esc(i.what)}</h2><div class="mut small">${esc(i.to)} · pedido ${esc(i.asked)}</div><ul class="tl" style="margin-top:14px">${i.hist.map(h=>`<li><b>${esc(h[0])}</b> · ${esc(h[1])}</li>`).join('')}</ul><h3 style="margin:16px 0 6px">Borrador preparado (editable)</h3><textarea id="rem-body">Buenos días,\n\nOs vuelvo a escribir sobre: ${i.what}. Lo pedimos ${i.asked} y aún no lo hemos recibido.\n\nNos hace falta para cerrar el mantenimiento de esta semana. ¿Podéis confirmarnos cuándo lo tendremos?\n\nGracias,\nJavier\nCarbonell (demo)</textarea><div class="act"><button class="btn ghost" onclick="closeDr()">Dejar para después</button><button class="btn" onclick="approveRem('${id}')">Aprobar (simulación)</button></div><p class="small mut">Aprobar registra la decisión en local. No se envía ningún correo.</p>`)}
+function approveRem(id){D[id]={action:'aprobada',ts:new Date().toLocaleString('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})};saveAll();closeDr();toast("Recordatorio aprobado. No se ha enviado nada.");render()}
+/* ------- Más ------- */
+function vMas(){$('#view').innerHTML=`<div class="heading"><h1>Más</h1></div><div class="card"><h2>Qué es real y qué es simulado</h2><p class="small">Maqueta independiente para la reunión del 19/11 con Javier. Todos los datos son ficticios: planos, problemas detectados, stocks, proveedores y peticiones. No está conectada al correo, al ERP ni a ninguna carpeta; aprobar solo registra la decisión dentro de este navegador. Las respuestas del asistente sobre los planos son de ejemplo, calculadas sobre los datos ficticios del documento.</p><p class="small">Lo que sí es real es el flujo: cada plano recibido pasa una revisión automática que marca lo que falta (revisión vigente, lista de piezas, firma), cada dato extraído lleva la página de origen, se puede preguntar sobre el documento con referencias, y cada borrador (devolución, recordatorio o pedido) se aprueba antes de enviarse.</p></div><div class="card" style="margin-top:14px"><h2>Por qué esta demo</h2><p class="small">En la primera conversación Javier trasladó que lleva compras, recambios y logística, y que muchas veces pide planos, información y manuales y no recibe nada, o los recibe con problemas, y lo acaba haciendo todo a mano. Por eso la demo pone el plano en el centro: pedirlo, recibirlo, detectar lo que le falta, devolverlo pidiendo la corrección, consultarlo con preguntas y sacar de él los recambios, todo con aprobación humana.</p></div><div class="act"><button class="btn ghost" onclick="resetAll()">Reiniciar la demo</button></div>`}
+function resetAll(){if(!confirm('¿Borra las decisiones locales y reinicia la demo?'))return;D={};drafts=[];saveAll();toast('Demo reiniciada');go('hoy')}
+function render(){nav();({hoy:vHoy,planos:vPlanos,recambios:vRecambios,peticiones:vPeticiones,mas:vMas}[state.route]||vHoy)()}
 const _pv=new URLSearchParams(location.search);
 if(_pv.get('v'))state.route=_pv.get('v');
 if(_pv.get('t'))state.tab=_pv.get('t');
 render();
-if(_pv.get('doc'))openDoc(Number(_pv.get('doc')));
-
+if(_pv.get('doc'))openPlano(Number(_pv.get('doc')));
 </script></body></html>
